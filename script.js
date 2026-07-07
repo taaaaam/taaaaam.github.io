@@ -1,171 +1,234 @@
 function showSection(sectionId) {
-    var sections = document.querySelectorAll('.section');
-    var links = document.querySelectorAll('.sidebar ul li a');
-    
-    // Hide all sections and remove active and glitch classes from all links
-    sections.forEach(function(section) {
-        section.style.display = 'none';
-        section.classList.remove('fade-in');
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
     });
-    links.forEach(function(link) {
-        link.classList.remove('active', 'glitch');
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
     });
-    
-    // Show the selected section
-    var activeSection = document.getElementById(sectionId);
-    if (activeSection) {
-        activeSection.style.display = 'block';
-        requestAnimationFrame(() => {
-            activeSection.classList.add('fade-in');
-        });
+
+    const target = document.getElementById(sectionId);
+    if (target) {
+        target.classList.add('active');
     }
-    
-    // Add active and glitch classes to the clicked link
-    var activeLink = document.querySelector('.sidebar ul li a[onclick="showSection(\'' + sectionId + '\')"]');
+
+    const activeLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
     if (activeLink) {
-        activeLink.classList.add('active', 'glitch');
-        activeLink.setAttribute('data-text',  activeLink.innerText);
+        activeLink.classList.add('active');
     }
+
+    document.getElementById('nav-links').classList.remove('open');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Typing Animation
-document.addEventListener("DOMContentLoaded", function() {
-    
-    var header = document.getElementById("header");
-    var desc1 = document.getElementById("desc1");
-    var desc2 = document.getElementById("desc2");
-    var desc3 = document.getElementById("desc3");
-    var text1 = "Hi! My name is Tam Vu.";
-    var text2 = "I'm a Computer Science and Statistics and Data Science double major at ";
-
-    var text3 = "Currently, I am working on image synthesis with deep learning for binary classification of multiple sclerosis lesions at "
-    var text4 = "I have a strong background in machine learning, statistical analysis and computer vision"
-    var text5 = "If you'd like to see my resume, click "
-    var text6 = "If you'd like to see my work, use the bar on the left to navigate"
-    var text6 = "Thanks for checking out my website, built from scratch!"
-
-    async function type(element, text, delay, speed, cursor_stay) {
-        let index = 0;
-        while (index < text.length) {
-            element.innerHTML = text.substring(0, index + 1) + '<span class="cursor">|</span>';
-            index++;
-            if (index === delay) {
-                await sleep(500); // Adjust delay speed here
-            } else {
-                await sleep(speed); // Adjust typing speed here
-            }
-        }
-        if (cursor_stay) {
-            element.innerHTML = text + '<span class="blinking-cursor">|</span>';
-        } else {
-            element.innerHTML = text;
-        }
-         // Ensure cursor remains at the end
-        if (element === header) {
-            element.setAttribute('data-text', text);
-            //element.classList.add('glitch');
-        }
+async function type(element, text, speed, keepCursor) {
+    for (let i = 0; i < text.length; i++) {
+        element.innerHTML = text.substring(0, i + 1) + '<span class="cursor">|</span>';
+        await sleep(speed);
     }
+    element.innerHTML = keepCursor
+        ? text + '<span class="blinking-cursor">|</span>'
+        : text;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const header = document.getElementById('header');
+    const desc1 = document.getElementById('desc1');
+    const desc2 = document.getElementById('desc2');
+    const desc3 = document.getElementById('desc3');
+    const desc4 = document.getElementById('desc4');
+    const desc5 = document.getElementById('desc5');
+    const heroActions = document.getElementById('hero-actions');
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            showSection(link.dataset.section);
+        });
+    });
+
+    document.getElementById('nav-toggle').addEventListener('click', () => {
+        document.getElementById('nav-links').classList.toggle('open');
+    });
 
     async function runTypingAnimations() {
-        var YaleLink = '<a id="Yale-Link"  href="https://www.yale.edu">\[Yale University\]</a>';
-        var CornellLink = '<a id="Cornell-Link"  href="https://weill.cornell.edu">\[Weill Cornell Medicine\]</a>';
-        var ResumeLink = '<a id="Resume-Link" href="/Resume_Tam_Vu_2024_v1.pdf" target="_blank">here</a>'
-        type(header, text1, 3, 100, false);
+        const yaleLink = '<a id="Yale-Link" href="https://www.yale.edu" target="_blank">Yale University</a>';
+        const brighterwayLink = '<a id="Brighterway-Link" href="https://brighterway.ai" target="_blank">Brighterway</a>';
+        const playanagramsLink = '<a id="Playanagrams-Link" href="https://playanagrams.com" target="_blank">playanagrams.com</a>';
 
-        const desc1Promise = type(desc1, text2, -1, 20, false).then(async () => {
-       
-            for (let i = 0; i < 3; i++) {
-                desc1.innerHTML = text2 + ' ' + YaleLink;
-                await sleep(100);
-                desc1.innerHTML = text2;
-                await sleep(100);
-            }
-            desc1.innerHTML = text2 + ' ' + YaleLink;
-            document.getElementById("Yale-Link").classList.add("glitch");
-        });
+        await type(header, 'Tam Vu.', 40, false);
 
-        const desc2Promise = type(desc2, text3, -1, 20, false).then(async () => {
-        
-            for (let i = 0; i < 3; i++) {
-                desc2.innerHTML = text3 + ' ' + CornellLink;
-                await sleep(100);
-                desc2.innerHTML = text3;
-                await sleep(100);
-            }
-            desc2.innerHTML = text3 + ' ' + CornellLink;
-            document.getElementById("Cornell-Link").classList.add("glitch");
-        });
+        const line1 = 'Software Engineer at ';
+        await type(desc1, line1, 10, false);
+        desc1.innerHTML = line1 + brighterwayLink;
 
-        // Wait for both desc1 and desc2 animations to complete
-        await Promise.all([desc1Promise, desc2Promise]);
+        const line2 = 'BS Computer Science from ';
+        await type(desc2, line2, 10, false);
+        desc2.innerHTML = line2 + yaleLink;
 
-        type(desc3, text4, -1, 20, false);
-        await(type(desc4, text5, -1, 20, false));
+        const line3 = 'BS Statistics & Data Science from ';
+        await type(desc3, line3, 10, false);
+        desc3.innerHTML = line3 + yaleLink;
 
-        for (let i = 0; i < 3; i++) {
-            desc4.innerHTML = text5 + ' ' + ResumeLink;
-            await sleep(100);
-            desc4.innerHTML = text5;
-            await sleep(100);
-        }
-        desc4.innerHTML = text5 + ' ' + ResumeLink;
-        // desc4.innerHTML = text5 + ResumeLink;
-        type(desc5, text6, -1, 20, true);
+        const line4 = 'Creator of ';
+        await type(desc4, line4, 10, false);
+        desc4.innerHTML = line4 + playanagramsLink;
+
+        await type(desc5, 'ML, backend systems, and full-stack product development', 10, true);
+
+        heroActions.style.opacity = '1';
     }
 
     runTypingAnimations();
+    showSection('home');
+    initHeroBackground();
+});
 
-    document.addEventListener("mouseover", function(event) {
-        if (event.target && (event.target.id === "Yale-Link" || event.target.id === "Cornell-Link")) {
-            let newText = event.target.id === "Yale-Link" ? "[Go Bulldogs!]" : "[Weill Cornell Medicine]";
-            event.target.innerText = newText;
-            event.target.style.color = event.target.id === "Yale-Link" ? "#00356b" : "";
-            event.target.setAttribute('data-text', newText);
-            event.target.classList.add('glitch');
-        }
+function initHeroBackground() {
+    const canvas = document.getElementById('hero-canvas');
+    const glow = document.getElementById('hero-glow');
+    const home = document.getElementById('home');
+    if (!canvas || !home) return;
 
-        if (event.target && event.target.id === "section-button") {
-            event.target.setAttribute('data-text',  event.target.innerText);
-            event.target.classList.add('glitch');
-        }
+    const ctx = canvas.getContext('2d');
+    let width, height, animationId, startTime;
+    let mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+    let blobs = [];
+    let stars = [];
 
-        
-    });
+    const palette = [
+        { core: 'rgba(255, 107, 74, 0.45)', edge: 'rgba(255, 107, 74, 0)' },
+        { core: 'rgba(62, 207, 189, 0.38)', edge: 'rgba(62, 207, 189, 0)' },
+        { core: 'rgba(155, 123, 255, 0.32)', edge: 'rgba(155, 123, 255, 0)' },
+        { core: 'rgba(240, 192, 64, 0.22)', edge: 'rgba(240, 192, 64, 0)' },
+        { core: 'rgba(255, 148, 120, 0.28)', edge: 'rgba(255, 148, 120, 0)' },
+    ];
 
-    document.addEventListener("mouseout", function(event) {
-        if (event.target && event.target.id === "Yale-Link") {
-            event.target.innerText = "\[Yale University\]";
-            event.target.style.color = ""; // Reset color
-            // Ensure we only remove the glitch class if it's not the active link
-
-        }
-
-
-
-        if (!event.target.classList.contains('active')) {
-            event.target.classList.remove('glitch');
-        }
-    });
-
-    function randomGlitch(element, minDelay, maxDelay) {
-        const delay = Math.random() * (maxDelay - minDelay) + minDelay;
-        setTimeout(() => {
-            element.classList.add('glitch');
-            setTimeout(() => {
-                element.classList.remove('glitch');
-                randomGlitch(element, minDelay, maxDelay);
-            }, 200); // Duration of the glitch
-        }, delay);
+    function lerp(a, b, t) {
+        return a + (b - a) * t;
     }
 
-    randomGlitch(header, 1000, 5000);
+    function resize() {
+        width = home.offsetWidth;
+        height = home.offsetHeight;
+        canvas.width = width;
+        canvas.height = height;
+        mouse.x = mouse.tx = width * 0.5;
+        mouse.y = mouse.ty = height * 0.45;
 
-    
-    showSection('home'); // Ensure the "Home" section is displayed by default
+        blobs = palette.map((color, i) => ({
+            color,
+            anchorX: width * (0.2 + i * 0.15),
+            anchorY: height * (0.3 + (i % 3) * 0.18),
+            x: 0,
+            y: 0,
+            radius: Math.min(width, height) * (0.28 + i * 0.06),
+            phase: i * 1.4 + Math.random(),
+            speed: 0.00025 + i * 0.00006,
+            drift: 0.08 + i * 0.015,
+        }));
 
-});
+        const starCount = Math.min(120, Math.floor((width * height) / 9000));
+        stars = Array.from({ length: starCount }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            r: Math.random() * 1.2 + 0.3,
+            phase: Math.random() * Math.PI * 2,
+            speed: 0.002 + Math.random() * 0.004,
+            drift: (Math.random() - 0.5) * 0.08,
+        }));
+    }
+
+    function drawBlob(blob, t) {
+        const waveX = Math.sin(t * blob.speed * 1000 + blob.phase) * width * blob.drift;
+        const waveY = Math.cos(t * blob.speed * 800 + blob.phase * 1.3) * height * blob.drift * 0.7;
+        const targetX = blob.anchorX + waveX + (mouse.x - width * 0.5) * (0.06 + blob.drift);
+        const targetY = blob.anchorY + waveY + (mouse.y - height * 0.5) * (0.06 + blob.drift);
+
+        blob.x = lerp(blob.x || targetX, targetX, 0.025);
+        blob.y = lerp(blob.y || targetY, targetY, 0.025);
+
+        const grad = ctx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, blob.radius);
+        grad.addColorStop(0, blob.color.core);
+        grad.addColorStop(0.45, blob.color.core.replace(/[\d.]+\)$/, '0.08)'));
+        grad.addColorStop(1, blob.color.edge);
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(blob.x, blob.y, blob.radius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    function drawStars(t) {
+        for (const star of stars) {
+            star.y += star.drift;
+            if (star.y > height) star.y = 0;
+
+            const twinkle = 0.25 + 0.75 * (0.5 + 0.5 * Math.sin(t * star.speed * 1000 + star.phase));
+            const dx = mouse.x - star.x;
+            const dy = mouse.y - star.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const pull = Math.max(0, 1 - dist / 200) * 0.6;
+
+            ctx.beginPath();
+            ctx.arc(star.x + dx * pull * 0.04, star.y + dy * pull * 0.04, star.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(244, 240, 232, ${twinkle * 0.5})`;
+            ctx.fill();
+        }
+    }
+
+    function draw(t) {
+        if (!startTime) startTime = t;
+        const elapsed = t - startTime;
+
+        mouse.x = lerp(mouse.x, mouse.tx, 0.06);
+        mouse.y = lerp(mouse.y, mouse.ty, 0.06);
+
+        if (glow) {
+            glow.style.left = mouse.x + 'px';
+            glow.style.top = mouse.y + 'px';
+        }
+
+        ctx.clearRect(0, 0, width, height);
+
+        ctx.globalCompositeOperation = 'lighter';
+        for (const blob of blobs) drawBlob(blob, elapsed);
+        ctx.globalCompositeOperation = 'source-over';
+
+        drawStars(elapsed);
+
+        animationId = requestAnimationFrame(draw);
+    }
+
+    home.addEventListener('mousemove', (e) => {
+        const rect = home.getBoundingClientRect();
+        mouse.tx = e.clientX - rect.left;
+        mouse.ty = e.clientY - rect.top;
+    });
+
+    home.addEventListener('mouseleave', () => {
+        mouse.tx = width * 0.5;
+        mouse.ty = height * 0.45;
+    });
+
+    window.addEventListener('resize', resize);
+
+    resize();
+    animationId = requestAnimationFrame(draw);
+
+    const observer = new MutationObserver(() => {
+        if (home.classList.contains('active')) {
+            cancelAnimationFrame(animationId);
+            startTime = null;
+            resize();
+            animationId = requestAnimationFrame(draw);
+        } else {
+            cancelAnimationFrame(animationId);
+        }
+    });
+    observer.observe(home, { attributes: true, attributeFilter: ['class'] });
+}

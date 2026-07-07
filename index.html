@@ -3,93 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio</title>
+    <meta name="description" content="Tam Vu — Software Engineer. Yale CS & Statistics graduate. Building at Brighterway (YC S24). Creator of playanagrams.com.">
+    <title>Tam Vu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <nav class="sidebar">
-            <ul>
-                <li><a id = "section-button" href="#" onclick="showSection('home')" class="active">Home</a></li>
-                <li><a id = "section-button" href="#" onclick="showSection('project1')">Synthetic Rims</a></li>
-                <li><a id = "section-button" href="#" onclick="showSection('project2')">Map of Life</a></li>
-                <li><a id = "section-button" href="#" onclick="showSection('project3')">VinBigData</a></li>
-                <li><a id = "section-button" href="#" onclick="showSection('project4')">YHack</a></li>
-                <li><a id = "section-button" href="#" onclick="showSection('project5')">ymeets</a></li>
-       
-            </ul>
-        </nav>
-        <div class="content">
-            <div id="home" class="section">
-                <div class="text-image-container">
-                    <div class="text-content">
-                        <h1 id="header"></h1>
-                        
-                        <p id="desc1"></p>
-                        <p id="desc2"></p>
-                        <p id="desc3"></p>
-                        <p id="desc4"></p>
-                        <p id="desc5"></p>
-                    </div>
-                    <div class="image-content">
-                        <img id='picture_me' src="/me.JPG">
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-logo" onclick="showSection('home'); return false;">tam vu</a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#" class="nav-link active" data-section="home">Home</a></li>
+            <li><a href="#" class="nav-link" data-section="experience">Experience</a></li>
+            <li><a href="#" class="nav-link" data-section="projects">Projects</a></li>
+            <li><a href="#" class="nav-link" data-section="skills">Skills</a></li>
+            <li><a href="#" class="nav-link" data-section="contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <!-- Home -->
+        <section id="home" class="section active">
+            <canvas id="hero-canvas" class="hero-canvas" aria-hidden="true"></canvas>
+            <div class="hero-glow" id="hero-glow" aria-hidden="true"></div>
+            <div class="hero">
+                <div class="hero-text">
+                    <p class="hero-greeting">Hello, I'm</p>
+                    <h1 id="header" class="hero-name"></h1>
+                    <p id="desc1" class="hero-line"></p>
+                    <p id="desc2" class="hero-line"></p>
+                    <p id="desc3" class="hero-line"></p>
+                    <p id="desc4" class="hero-line"></p>
+                    <p id="desc5" class="hero-line"></p>
+                    <div class="hero-actions" id="hero-actions" style="opacity: 0;">
+                        <a href="/Resume_Tam_Vu_2026.pdf" target="_blank" class="btn btn-primary">Resume</a>
+                        <a href="https://github.com/taaaaam" target="_blank" class="btn btn-icon" aria-label="GitHub">
+                            <img src="github.png" alt="" class="github-icon">
+                        </a>
+                        <a href="https://www.linkedin.com/in/tam-vu1" target="_blank" class="btn btn-icon" aria-label="LinkedIn">
+                            <img src="linkedin.svg" alt="">
+                        </a>
                     </div>
                 </div>
+                <div class="hero-image">
+                    <div class="image-ring">
+                        <img src="me.JPG" alt="Tam Vu">
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <!-- Experience -->
+        <section id="experience" class="section">
+            <div class="section-inner">
+                <h2 class="section-title">Experience</h2>
+                <div class="timeline">
+                    <article class="timeline-card">
+                        <div class="timeline-meta">
+                            <span class="timeline-date">Jan 2025 — Present</span>
+                            <span class="timeline-location">San Francisco, CA</span>
+                        </div>
+                        <h3>Software Engineer · <a href="https://brighterway.ai" target="_blank">Brighterway</a> <span class="badge">YC S24</span></h3>
+                        <ul>
+                            <li>Implemented an AI document splitter workflow that reduced infrastructure costs by 50% while increasing model accuracy, using LLMs and cloud services (AWS Bedrock, Azure, GCP).</li>
+                            <li>Designed scalable HIPAA-compliant backend APIs that increased client processing capacity by 10× through automated enterprise document ingestion.</li>
+                            <li>Redesigned the production frontend QC pipeline, increasing document verification throughput by 40% and reducing turnaround time by 35%.</li>
+                            <li>Built a production AI voice agent with physicians to automate patient medical history intake, reducing documentation effort.</li>
+                        </ul>
+                    </article>
 
-           
-                
-            </div>
+                    <article class="timeline-card">
+                        <div class="timeline-meta">
+                            <span class="timeline-date">May 2024 — Aug 2024</span>
+                            <span class="timeline-location">New York City, NY</span>
+                        </div>
+                        <h3>Researcher · <a href="https://weill.cornell.edu" target="_blank">Weill Cornell Medicine</a></h3>
+                        <ul>
+                            <li>Improved rim lesion detection accuracy for multiple sclerosis by 8% by developing and training a residual neural network on synthesized rim lesion data with PyTorch, outperforming QSMRim-Net.</li>
+                            <li>Resolved data imbalance by increasing rim lesion count from 177 to 10,000+ via an image augmentation algorithm synthesizing rim lesions from non-lesion data using SciPy and NumPy.</li>
+                            <li>Collaborating with radiology professors and PhD students to draft a first-author paper for publication.</li>
+                        </ul>
+                    </article>
 
-            <div id="project1" class="section" style="display: none;">
-                <h1>Synthetic Rims</h1>
-                <p>A essential part of training a deep learning network on medical images is the data itself. Medical data is limited by many factors such as human scanning, patient availability, and the count of lesions.</p>
-                <p>In 2022, QSMRim-Net proved to be the state of the art model for detection of rim lesions for multiple sclerosis. The issue is, rim lesions are rare, creating a data imbalance issue and hindering the model's performance. </p>
-                <p>I propose a new method: by synthesizing rim lesions on QSM given information from FLAIR image masks, we solve the data imblanace issue by increasing the rim lesion count for ~130 to over 10,000. This greatly expanding the possibilites for machine learning methods.</p>
-                <p>Training a simple ResNet18 model on the synthetic data outperforms the state of the art QSMRim-Net.</p>
-                <p>Additionally, I also developed a program that streamlines the data collection to visualization pipeline, as well as developing a more efficient visualization GUI for 3D image patches.</p>
-                <p>Currently drafting a first author publication.</p>
-                <p>Languages and technologies used: Python, NumPy, SciPy, MATLAB, Pandas, PyTorch, TorchIO, sci-kit learn, ITK-SNAP</p>
-                <!-- Add more project details here -->
+                    <article class="timeline-card">
+                        <div class="timeline-meta">
+                            <span class="timeline-date">May 2023 — Aug 2023</span>
+                            <span class="timeline-location">New Haven, CT</span>
+                        </div>
+                        <h3>Data Science Intern · Yale Center for Biodiversity and Global Change</h3>
+                        <ul>
+                            <li>Developed report generation for species distribution modelling using R and SQL, resulting in 3 additional filters added to the SDM interface on <a href="https://mol.org" target="_blank">mol.org</a>.</li>
+                            <li>Implemented a seasonal feature that models species distribution across seasons, allowing ecologists to track migration patterns.</li>
+                        </ul>
+                    </article>
+                </div>
             </div>
-            <div id="project2" class="section" style="display: none;">
-                <h1>Yale Center for Biodiversity and Global Change</h1>
-                
-                <p>As a data science intern, I worked on Yale BGC's flagship project, the Map of Life <a href="https://mol.org" class="mollink" target="_blank">(mol.org)</a></p>
-                <p>Geographic information about biodiversity is vital for understanding the many services nature provides and their potential changes, yet remains unreliable and often insufficient. Built on a scalable web platform geared for large biodiversity and environmental data, Map of Life endeavors to provide 'best-possible' species range information and species lists for any geographic area. Map of Life aims to support effective and global biodiversity education, monitoring, research and decision-making by assembling and integrating a wide range of knowledge about species distributions and their dynamics over time.</p>
-                <p>I work closely with a team of four on improving the workflow of the implementation of species distribution models (SDMs), which is the backbone for interpreting spatial and environmental data pertaining to any species. This allows for spatial predictions to be made based on the niche and behavior of a given species. My responsibility is to implement a report generation system to the current workflow, which visualizes the summary statistics once a model has been run.</p>
-                <p>Languages and technologies used: R, SQL, Python, QGIS</p>
-                <img id="picture_mol" src="/mol.png">
-                <!-- Add more project details here -->
-            </div>
-            <div id="project3" class="section" style="display: none;">
-                <h1>VinBigData</h1>
-                <p>VinBigData JSC was founded as part of a key strategic development for Vingroup's goal of becoming a world-class Technology - Industrials - Services corporation, with technology taking center stage. Thanks to the competitive advantage of large-scale database, VinBigData provides cutting-edge products and platform solutions based on Big Data and Artificial Intelligence with world-class quality, supporting enterprises to accelerate digital transformation, optimize operation and business efficiency as well as enhance end-user experience.</p>
-                <p>I worked on the computer vision team, where we designed and tested methods to use deep learning for medical image segmentation.</p>
-                <p>Here, I built a 3D U-Net based model from scratch for liver lesion segmentation on CT scans.</p>
-                <p>Languages and technologies: Python, PyTorch, NumPy</p>
-                <img id="picture_vin" src="/vin.JPG">
-                <!-- Add more project details here -->
-            </div>
-            <div id="project4" class="section" style="display: none;">
-                <h1>YHack</h1>
-                <p>Check out the website I built for the official Yale Hackathon! <a href="https://yhack.org" target="_blank">(yhack.org)</a></p>
-                <p>Also as design lead, I was responsible for making the advertisements (and the logo!)</p>
-                <img id="picture_yhack" src="./yhack.png"  class = "poster">
-                <img id="picture_yhack" src="./yhack2.png"  class = "poster">
-                <img id="picture_yhack" src="./yhack3.png"  class = "poster">
-                <p>Languages and technologies: HTML, CSS, React.js, Typescript, JavaScript, Figma</p>
+        </section>
 
-            </div>
-            <div id="project5" class="section" style="display: none;">
-                <h1>ymeets.org</h1>
-                <p>Official meeting scheduling application for Yale students and faculty (not yet released) <a href="https://ymeets.org" target="_blank">(ymeets.org)</a></p>
-                <p>Languages and technologies: HTML, CSS, React.js, Typescript, JavaScript, MongoDB, AWS</p>
-                <img id="picture_ymeets" src="/ymeets.png">
-            </div>
-        </div>
+        <!-- Projects -->
+        <section id="projects" class="section">
+            <div class="section-inner">
+                <h2 class="section-title">Projects</h2>
+                <div class="project-grid">
+                    <article class="project-card featured">
+                        <div class="project-header">
+                            <h3><a href="https://playanagrams.com" target="_blank">playanagrams.com</a></h3>
+                            <span class="project-date">Apr 2026 — Present</span>
+                        </div>
+                        <p class="project-desc">Full-stack multiplayer word game built from concept to production — real-time gameplay, ELO matchmaking, server-side anticheat, and hand-drawn visual/audio assets. 5,000+ multiplayer matches and counting.</p>
+                        <a href="https://playanagrams.com" target="_blank" class="site-preview">
+                            <img src="preview-playanagrams.png" alt="playanagrams.com preview">
+                            <span class="site-preview-url">playanagrams.com</span>
+                        </a>
+                        <div class="project-tags">
+                            <span>TypeScript</span><span>React</span><span>Node.js</span><span>WebSockets</span>
+                        </div>
+                    </article>
 
-    </div>
+                    <article class="project-card">
+                        <div class="project-header">
+                            <h3><a href="https://yhack.org" target="_blank">YHack</a></h3>
+                            <span class="project-date">Sep 2021 — May 2025</span>
+                        </div>
+                        <p class="project-desc">Fullstack Lead for Yale's official hackathon. Built the website and participant portal on React and Firebase, attracting 1,000+ hackers and multiple industry sponsors with a $10,000+ prize pool annually.</p>
+                        <div class="project-images">
+                            <img src="yhack.png" alt="YHack website screenshot">
+                            <img src="yhack2.png" alt="YHack design">
+                            <img src="yhack3.png" alt="YHack logo">
+                        </div>
+                        <div class="project-tags">
+                            <span>React</span><span>Firebase</span><span>TypeScript</span><span>Figma</span>
+                        </div>
+                    </article>
+
+                    <article class="project-card">
+                        <div class="project-header">
+                            <h3>Synthetic Rim Lesions</h3>
+                            <span class="project-date">Weill Cornell Research</span>
+                        </div>
+                        <p class="project-desc">Novel method for synthesizing rim lesions on QSM images to solve data imbalance in MS detection. ResNet18 trained on synthetic data outperforms state-of-the-art QSMRim-Net. First-author publication in progress.</p>
+                        <div class="project-tags">
+                            <span>PyTorch</span><span>NumPy</span><span>SciPy</span><span>MATLAB</span>
+                        </div>
+                    </article>
+
+                    <article class="project-card">
+                        <div class="project-header">
+                            <h3><a href="https://mol.org" target="_blank">Map of Life</a></h3>
+                            <span class="project-date">Yale BGC Internship</span>
+                        </div>
+                        <p class="project-desc">Report generation system for species distribution models on mol.org, enabling ecologists to visualize model performance and track species migration across seasons.</p>
+                        <a href="https://mol.org" target="_blank" class="site-preview">
+                            <img src="preview-mol.png" alt="mol.org preview">
+                            <span class="site-preview-url">mol.org</span>
+                        </a>
+                        <div class="project-tags">
+                            <span>R</span><span>SQL</span><span>Python</span><span>REST APIs</span>
+                        </div>
+                    </article>
+
+                    <article class="project-card">
+                        <div class="project-header">
+                            <h3><a href="https://ymeets.com" target="_blank">ymeets.com</a></h3>
+                            <span class="project-date">Yale</span>
+                        </div>
+                        <p class="project-desc">Meeting scheduling application for Yale students and faculty, built with React, MongoDB, and AWS.</p>
+                        <a href="https://ymeets.com" target="_blank" class="site-preview">
+                            <img src="preview-ymeets.png" alt="ymeets.com preview">
+                            <span class="site-preview-url">ymeets.com</span>
+                        </a>
+                        <div class="project-tags">
+                            <span>React</span><span>TypeScript</span><span>MongoDB</span><span>AWS</span>
+                        </div>
+                    </article>
+
+                    <article class="project-card">
+                        <div class="project-header">
+                            <h3>VinBigData</h3>
+                            <span class="project-date">Computer Vision Internship</span>
+                        </div>
+                        <p class="project-desc">Worked on the computer vision team designing and testing deep learning methods for medical image segmentation. Built a 3D U-Net model from scratch for liver lesion segmentation on CT scans.</p>
+                        <img src="vin.JPG" alt="VinBigData liver lesion segmentation" class="project-screenshot">
+                        <div class="project-tags">
+                            <span>Python</span><span>PyTorch</span><span>NumPy</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills -->
+        <section id="skills" class="section">
+            <div class="section-inner">
+                <h2 class="section-title">Skills</h2>
+                <div class="skills-grid">
+                    <div class="skill-group">
+                        <h3>Languages</h3>
+                        <p>Python, JavaScript, TypeScript, Java, C++, C, R, MATLAB, SQL</p>
+                    </div>
+                    <div class="skill-group">
+                        <h3>Technologies</h3>
+                        <p>React, Node.js, Express, AWS, GCP, Azure, PostgreSQL, Docker, PyTorch</p>
+                    </div>
+                    <div class="skill-group">
+                        <h3>Tools</h3>
+                        <p>Git, NumPy, Pandas, SciPy, Firebase, Unity</p>
+                    </div>
+                    <div class="skill-group">
+                        <h3>Education</h3>
+                        <p><strong>Yale University</strong> — BS Computer Science & BS Statistics and Data Science (May 2025)</p>
+                        <p class="skill-note">Teaching Assistant, S&DS 265 — Introductory Machine Learning</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section id="contact" class="section">
+            <div class="section-inner contact-section">
+                <h2 class="section-title">Contact</h2>
+                <p class="contact-intro">I'm always open to chatting about software, research, or new opportunities.</p>
+                <div class="contact-links">
+                    <a href="mailto:tamvu2104@gmail.com" class="contact-card">
+                        <span class="contact-label">Email</span>
+                        <span class="contact-value">tamvu2104@gmail.com</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/tam-vu1" target="_blank" class="contact-card contact-icon-card">
+                        <img src="linkedin.svg" alt="LinkedIn" class="contact-icon">
+                        <span class="contact-value">tam-vu1</span>
+                    </a>
+                    <a href="https://github.com/taaaaam" target="_blank" class="contact-card contact-icon-card">
+                        <img src="github.png" alt="GitHub" class="contact-icon github-icon">
+                        <span class="contact-value">taaaaam</span>
+                    </a>
+                    <a href="/Resume_Tam_Vu_2026.pdf" target="_blank" class="contact-card">
+                        <span class="contact-label">Resume</span>
+                        <span class="contact-value">Download PDF</span>
+                    </a>
+                </div>
+                <p class="footer-note">Built from scratch · San Francisco, CA</p>
+            </div>
+        </section>
+    </main>
+
     <script src="script.js"></script>
 </body>
 </html>
