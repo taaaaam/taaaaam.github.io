@@ -7,14 +7,14 @@
 
 :root {
   --yellow: #ffd400;
-  --black:  #0d0d0d;
-  --white:  #fbf9f2;
+  --black: #0d0d0d;
+  --white: #fbf9f2;
 
-  --bg:    var(--yellow);
-  --ink:   var(--black);
-  --dim:   rgba(13, 13, 13, 0.66);
+  --bg: var(--yellow);
+  --ink: var(--black);
+  --dim: rgba(13, 13, 13, 0.66);
   --faint: rgba(13, 13, 13, 0.45);
-  --line:  rgba(13, 13, 13, 0.22);
+  --line: rgba(13, 13, 13, 0.22);
 
   --display: "Jost", "Futura", Avenir, -apple-system, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -24,9 +24,16 @@
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
 
 body {
   background: var(--bg);
@@ -39,19 +46,36 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-a { color: inherit; text-decoration: none; }
-ul, ol { list-style: none; }
-img { display: block; max-width: 100%; }
+a {
+  color: inherit;
+  text-decoration: none;
+}
+ul,
+ol {
+  list-style: none;
+}
+img {
+  display: block;
+  max-width: 100%;
+}
 
-::selection { background: var(--black); color: var(--yellow); }
+::selection {
+  background: var(--black);
+  color: var(--yellow);
+}
 
-:focus-visible { outline: 3px solid var(--black); outline-offset: 3px; }
+:focus-visible {
+  outline: 3px solid var(--black);
+  outline-offset: 3px;
+}
 
 /* ── Top bar ───────────────────────────────────────────────── */
 
 .topbar {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 60;
   display: flex;
   align-items: center;
@@ -65,31 +89,52 @@ img { display: block; max-width: 100%; }
   border-bottom: 2px solid transparent;
   transition: border-color 0.2s;
 }
-.topbar.stuck { border-bottom-color: var(--black); }
+.topbar.stuck {
+  border-bottom-color: var(--black);
+}
 
-.mark { display: flex; align-items: center; gap: 0.6rem; }
+.mark {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
 .mark-glyph {
   display: grid;
   place-items: center;
-  width: 28px; height: 28px;
+  width: 28px;
+  height: 28px;
   background: var(--black);
-  color: var(--yellow);          /* the banana strokes use currentColor */
-  transition: background 0.2s, color 0.2s;
+  color: var(--yellow); /* the banana strokes use currentColor */
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
-.mark-glyph svg { width: 20px; height: 20px; display: block; }
-.mark:hover .mark-glyph { background: var(--white); color: var(--black); }
+.mark-glyph svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+.mark:hover .mark-glyph {
+  background: var(--white);
+  color: var(--black);
+}
 .mark-name {
   font-family: var(--display);
   font-size: 0.95rem;
   font-weight: 500;
 }
 
-.nav { display: flex; gap: 1.5rem; }
+.nav {
+  display: flex;
+  gap: 1.5rem;
+}
 .nav a {
   color: var(--dim);
   padding-bottom: 2px;
   border-bottom: 2px solid transparent;
-  transition: color 0.2s, border-color 0.2s;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
 }
 .nav a i {
   font-style: normal;
@@ -97,9 +142,17 @@ img { display: block; max-width: 100%; }
   margin-right: 0.3rem;
   transition: color 0.2s;
 }
-.nav a:hover, .nav a.on { color: var(--ink); }
-.nav a.on { border-bottom-color: var(--black); }
-.nav a:hover i, .nav a.on i { color: var(--ink); }
+.nav a:hover,
+.nav a.on {
+  color: var(--ink);
+}
+.nav a.on {
+  border-bottom-color: var(--black);
+}
+.nav a:hover i,
+.nav a.on i {
+  color: var(--ink);
+}
 
 .status {
   background: var(--black);
@@ -107,9 +160,14 @@ img { display: block; max-width: 100%; }
   padding: 0.45rem 0.8rem;
   font-weight: 500;
   border: 2px solid var(--black);
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
-.status:hover { background: transparent; color: var(--black); }
+.status:hover {
+  background: transparent;
+  color: var(--black);
+}
 
 /* ── Shell ─────────────────────────────────────────────────── */
 
@@ -141,7 +199,9 @@ main {
   gap: 0.6rem;
   margin-bottom: 1.4rem;
 }
-.eyeline b { color: var(--ink); }
+.eyeline b {
+  color: var(--ink);
+}
 
 .giant {
   font-size: clamp(4rem, 14vw, 11rem);
@@ -150,8 +210,13 @@ main {
   letter-spacing: -0.03em;
   color: var(--ink);
 }
-.giant .line { display: block; }
-.giant em { font-style: normal; color: var(--white); }
+.giant .line {
+  display: block;
+}
+.giant em {
+  font-style: normal;
+  color: var(--white);
+}
 /* the spoken lead-in — same sentence, quieter voice */
 .giant .greet {
   display: block;
@@ -176,9 +241,12 @@ main {
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
   margin-top: clamp(1.6rem, 3vw, 2.4rem);
 }
+/* a little air between the Résumé button and the bare icons */
+.hero-actions .btn-icon:first-of-type { margin-left: 0.4rem; }
 
 .btn {
   font-family: var(--mono);
@@ -187,15 +255,42 @@ main {
   padding: 0.8rem 1.3rem;
   border: 2px solid var(--black);
   color: var(--ink);
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
-.btn:hover { background: var(--black); color: var(--yellow); }
+.btn:hover {
+  background: var(--black);
+  color: var(--yellow);
+}
 .btn-solid {
   background: var(--black);
   color: var(--yellow);
   font-weight: 500;
 }
-.btn-solid:hover { background: transparent; color: var(--black); }
+.btn-solid:hover {
+  background: transparent;
+  color: var(--black);
+}
+/* icon-only links — no box, just the glyph. Bigger than the text
+   cap-height, vertically centred against the Résumé button. */
+.btn-icon {
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  color: var(--black);
+}
+.btn-icon:hover {
+  background: transparent;
+  color: var(--black);
+  opacity: 0.55;
+}
+.btn-icon svg {
+  width: 1.9rem;
+  height: 1.9rem;
+  display: block;
+}
 
 /* ── Bauhaus self-portrait ─────────────────────────────────────
    Just the head: a circle, an angular swept crop, and ringed
@@ -209,18 +304,38 @@ main {
   width: 100%;
   justify-self: end;
 }
-.face { width: 100%; height: 100%; display: block; }
+.face {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
 
-.fc-head, .fc-hair, .fc-eye, .fc-nose, .fc-mouth {
+.fc-head,
+.fc-hair,
+.fc-eye,
+.fc-nose,
+.fc-mouth {
   transform-box: fill-box;
   transform-origin: center;
 }
 
-.fc-head   { fill: var(--white); }
-.fc-hair   { fill: var(--black); }
-.fc-socket { fill: #fff; stroke: var(--black); stroke-width: 2.2; }
-.fc-pupil  { fill: var(--black); }
-.fc-nose   { fill: var(--black); }
+.fc-head {
+  fill: var(--white);
+}
+.fc-hair {
+  fill: var(--black);
+}
+.fc-socket {
+  fill: #fff;
+  stroke: var(--black);
+  stroke-width: 2.2;
+}
+.fc-pupil {
+  fill: var(--black);
+}
+.fc-nose {
+  fill: var(--black);
+}
 .fc-mouth {
   fill: none;
   stroke: var(--black);
@@ -232,12 +347,17 @@ main {
    Head drops in, the crop slides on, then the features pop on
    in reading order.                                          */
 
-.js .hero-shapes { opacity: 1; transform: none; }  /* parts animate, not the frame */
+.js .hero-shapes {
+  opacity: 1;
+  transform: none;
+} /* parts animate, not the frame */
 .js .fc-head,
 .js .fc-hair,
 .js .fc-eye,
 .js .fc-nose,
-.js .fc-mouth { opacity: 0; }
+.js .fc-mouth {
+  opacity: 0;
+}
 
 .js .hero-shapes.in .fc-head,
 .js .hero-shapes.in .fc-hair,
@@ -249,33 +369,77 @@ main {
   animation-timing-function: cubic-bezier(0.2, 1.35, 0.5, 1);
 }
 
-.js .hero-shapes.in .fc-head  { animation-name: drop-in;  animation-delay: 0.05s; }
-.js .hero-shapes.in .fc-hair  { animation-name: hair-on;  animation-delay: 0.30s; }
-.js .hero-shapes.in .fc-eye-l { animation-name: pop-in;   animation-delay: 0.52s; }
-.js .hero-shapes.in .fc-eye-r { animation-name: pop-in;   animation-delay: 0.62s; }
-.js .hero-shapes.in .fc-nose  { animation-name: drop-in;  animation-delay: 0.72s; }
-.js .hero-shapes.in .fc-mouth { animation-name: mouth-on; animation-delay: 0.82s; }
+.js .hero-shapes.in .fc-head {
+  animation-name: drop-in;
+  animation-delay: 0.05s;
+}
+.js .hero-shapes.in .fc-hair {
+  animation-name: hair-on;
+  animation-delay: 0.3s;
+}
+.js .hero-shapes.in .fc-eye-l {
+  animation-name: pop-in;
+  animation-delay: 0.52s;
+}
+.js .hero-shapes.in .fc-eye-r {
+  animation-name: pop-in;
+  animation-delay: 0.62s;
+}
+.js .hero-shapes.in .fc-nose {
+  animation-name: drop-in;
+  animation-delay: 0.72s;
+}
+.js .hero-shapes.in .fc-mouth {
+  animation-name: mouth-on;
+  animation-delay: 0.82s;
+}
 
 @keyframes drop-in {
-  from { opacity: 0; transform: translateY(-38px); }
-  to   { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(-38px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 @keyframes hair-on {
-  from { opacity: 0; transform: translateY(-26px) rotate(-8deg); }
-  to   { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(-26px) rotate(-8deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 @keyframes pop-in {
-  from { opacity: 0; transform: scale(0); }
-  to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 @keyframes mouth-on {
-  from { opacity: 0; transform: scaleX(0.2); }
-  to   { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: scaleX(0.2);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* ── Section heads ─────────────────────────────────────────── */
 
-.band { padding: clamp(5rem, 10vw, 9rem) 0 0; }
+.band {
+  padding: clamp(5rem, 10vw, 9rem) 0 0;
+}
 
 .band-head {
   display: flex;
@@ -288,7 +452,8 @@ main {
 .band-head .index {
   display: grid;
   place-items: center;
-  width: 2rem; height: 2rem;
+  width: 2rem;
+  height: 2rem;
   background: var(--black);
   color: var(--yellow);
   font-family: var(--mono);
@@ -313,12 +478,20 @@ main {
   background: var(--black);
   transform: scale(0.4) rotate(-45deg);
   opacity: 0;
-  transition: transform 0.6s cubic-bezier(0.2, 1.35, 0.5, 1) 0.15s,
-              opacity 0.5s var(--ease) 0.15s;
+  transition:
+    transform 0.6s cubic-bezier(0.2, 1.35, 0.5, 1) 0.15s,
+    opacity 0.5s var(--ease) 0.15s;
 }
-.band-head.in .head-glyph { transform: none; opacity: 1; }
-.hg-circle  { border-radius: 50%; }
-.hg-quarter { border-radius: 100% 0 0 0; }
+.band-head.in .head-glyph {
+  transform: none;
+  opacity: 1;
+}
+.hg-circle {
+  border-radius: 50%;
+}
+.hg-quarter {
+  border-radius: 100% 0 0 0;
+}
 .hg-ring {
   background: transparent;
   border: 5px solid var(--black);
@@ -330,9 +503,15 @@ main {
   grid-template-columns: repeat(2, 1fr);
   gap: 3px;
 }
-.hg-grid i { background: var(--black); }
-.hg-grid i:nth-child(2) { border-radius: 50%; }
-.hg-grid i:nth-child(3) { border-radius: 100% 0 0 0; }
+.hg-grid i {
+  background: var(--black);
+}
+.hg-grid i:nth-child(2) {
+  border-radius: 50%;
+}
+.hg-grid i:nth-child(3) {
+  border-radius: 100% 0 0 0;
+}
 
 /* ── Timeline ──────────────────────────────────────────────── */
 
@@ -358,7 +537,9 @@ main {
   gap: clamp(1rem, 3vw, 2.5rem);
   padding: 0 0 clamp(2.5rem, 5vw, 3.5rem);
 }
-.tl:last-child { padding-bottom: 0; }
+.tl:last-child {
+  padding-bottom: 0;
+}
 
 /* node sitting on the spine — cycles through the shape vocabulary */
 .tl::before {
@@ -366,16 +547,21 @@ main {
   position: absolute;
   left: calc(clamp(0.9rem, 2.2vw, 1.6rem) - clamp(2.5rem, 6vw, 4.5rem) - 7px);
   top: 0.45rem;
-  width: 16px; height: 16px;
+  width: 16px;
+  height: 16px;
   background: var(--black);
 }
-.tl:nth-child(2)::before { border-radius: 50%; }
+.tl:nth-child(2)::before {
+  border-radius: 50%;
+}
 .tl:nth-child(3)::before {
   background: var(--yellow);
   border: 4px solid var(--black);
   border-radius: 50%;
 }
-.tl:nth-child(4)::before { border-radius: 100% 0 0 0; }
+.tl:nth-child(4)::before {
+  border-radius: 100% 0 0 0;
+}
 
 .tl-when {
   font-family: var(--mono);
@@ -413,13 +599,17 @@ main {
   color: var(--faint);
   margin: 0 0 0.8rem;
 }
-.tl-org a, .tl-copy a {
+.tl-org a,
+.tl-copy a {
   color: var(--ink);
   font-weight: 500;
   border-bottom: 2px solid var(--line);
   transition: border-color 0.2s;
 }
-.tl-org a:hover, .tl-copy a:hover { border-bottom-color: var(--black); }
+.tl-org a:hover,
+.tl-copy a:hover {
+  border-bottom-color: var(--black);
+}
 .tl-copy {
   color: rgba(13, 13, 13, 0.82);
   max-width: 62ch;
@@ -450,10 +640,17 @@ main {
   border: 2px solid var(--black);
   display: flex;
   flex-direction: column;
-  transition: background 0.25s, color 0.25s;
+  transition:
+    background 0.25s,
+    color 0.25s;
 }
-.card:hover { background: var(--black); color: var(--yellow); }
-.card-wide { grid-column: span 2; }
+.card:hover {
+  background: var(--black);
+  color: var(--yellow);
+}
+.card-wide {
+  grid-column: span 2;
+}
 
 .card-media {
   display: block;
@@ -463,11 +660,14 @@ main {
   background: rgba(13, 13, 13, 0.08);
 }
 .card-media img {
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: top center;
 }
-.card-wide .card-media { aspect-ratio: 21 / 9; }
+.card-wide .card-media {
+  aspect-ratio: 21 / 9;
+}
 
 /* flat geometric stand-in where there's no screenshot */
 .card-media-shape {
@@ -476,16 +676,20 @@ main {
 }
 .glyph-circle {
   position: absolute;
-  left: 12%; top: 50%;
+  left: 12%;
+  top: 50%;
   transform: translateY(-50%);
-  width: 40%; aspect-ratio: 1;
+  width: 40%;
+  aspect-ratio: 1;
   border-radius: 50%;
   background: var(--yellow);
 }
 .glyph-bar {
   position: absolute;
-  right: 12%; top: 18%;
-  width: 14%; height: 64%;
+  right: 12%;
+  top: 18%;
+  width: 14%;
+  height: 64%;
   background: var(--yellow);
 }
 
@@ -522,14 +726,18 @@ main {
   display: inline-block;
   transition: transform 0.25s var(--ease);
 }
-.card-body h3 a:hover .go { transform: translate(3px, -3px); }
+.card-body h3 a:hover .go {
+  transform: translate(3px, -3px);
+}
 .card-body p {
   font-size: 0.95rem;
   color: rgba(13, 13, 13, 0.82);
   text-wrap: pretty;
   transition: color 0.25s;
 }
-.card:hover .card-body p { color: rgba(251, 249, 242, 0.85); }
+.card:hover .card-body p {
+  color: rgba(251, 249, 242, 0.85);
+}
 
 .tags {
   display: flex;
@@ -547,7 +755,9 @@ main {
   color: var(--dim);
   transition: color 0.25s;
 }
-.card:hover .tags li { color: rgba(251, 249, 242, 0.7); }
+.card:hover .tags li {
+  color: rgba(251, 249, 242, 0.7);
+}
 
 /* ── Stack ─────────────────────────────────────────────────── */
 
@@ -567,14 +777,23 @@ main {
   padding: 0.3rem 0.6rem;
   margin-bottom: 1.1rem;
 }
-.chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
 .chips li {
   font-size: 0.88rem;
   padding: 0.35rem 0.7rem;
   border: 2px solid var(--black);
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
-.chips li:hover { background: var(--black); color: var(--yellow); }
+.chips li:hover {
+  background: var(--black);
+  color: var(--yellow);
+}
 
 .edu-school {
   font-size: 1.2rem;
@@ -582,7 +801,10 @@ main {
   letter-spacing: -0.015em;
   margin-bottom: 0.3rem;
 }
-.edu-detail { line-height: 1.5; color: rgba(13, 13, 13, 0.82); }
+.edu-detail {
+  line-height: 1.5;
+  color: rgba(13, 13, 13, 0.82);
+}
 .edu-detail span {
   display: block;
   font-family: var(--mono);
@@ -600,15 +822,21 @@ main {
 
 /* ── Contact ───────────────────────────────────────────────── */
 
-.band-contact { padding-bottom: 2rem; }
+.band-contact {
+  padding-bottom: 2rem;
+}
 
 .mailto {
   display: block;
   padding-bottom: clamp(1rem, 2vw, 1.5rem);
   border-bottom: 3px solid var(--line);
-  transition: border-color 0.25s, border-width 0.25s;
+  transition:
+    border-color 0.25s,
+    border-width 0.25s;
 }
-.mailto:hover { border-bottom-color: var(--black); }
+.mailto:hover {
+  border-bottom-color: var(--black);
+}
 .mailto-label {
   display: block;
   font-family: var(--mono);
@@ -640,7 +868,9 @@ main {
   max-width: 34ch;
 }
 
-.contact-links { display: grid; }
+.contact-links {
+  display: grid;
+}
 .contact-links a {
   display: flex;
   justify-content: space-between;
@@ -650,9 +880,14 @@ main {
   border-bottom: 2px solid var(--line);
   font-family: var(--mono);
   font-size: 0.82rem;
-  transition: border-color 0.2s, padding-left 0.25s var(--ease);
+  transition:
+    border-color 0.2s,
+    padding-left 0.25s var(--ease);
 }
-.contact-links a span { color: var(--faint); font-size: 0.72rem; }
+.contact-links a span {
+  color: var(--faint);
+  font-size: 0.72rem;
+}
 .contact-links a:hover {
   border-bottom-color: var(--black);
   padding-left: 0.4rem;
@@ -666,16 +901,33 @@ main {
   margin-top: clamp(3rem, 7vw, 5rem);
   height: 2.6rem;
 }
-.sr { flex: none; height: 100%; aspect-ratio: 1; background: var(--black); }
-.sr-circle  { border-radius: 50%; }
-.sr-quarter { border-radius: 100% 0 0 0; }
-.sr-half    { border-radius: 999px 999px 0 0; height: 50%; aspect-ratio: 2 / 1; }
+.sr {
+  flex: none;
+  height: 100%;
+  aspect-ratio: 1;
+  background: var(--black);
+}
+.sr-circle {
+  border-radius: 50%;
+}
+.sr-quarter {
+  border-radius: 100% 0 0 0;
+}
+.sr-half {
+  border-radius: 999px 999px 0 0;
+  height: 50%;
+  aspect-ratio: 2 / 1;
+}
 .sr-ring {
   background: transparent;
   border: 6px solid var(--black);
   border-radius: 50%;
 }
-.sr-bar { flex: 1; aspect-ratio: auto; height: 40%; }
+.sr-bar {
+  flex: 1;
+  aspect-ratio: auto;
+  height: 40%;
+}
 
 .foot {
   display: flex;
@@ -696,19 +948,33 @@ main {
 .js .reveal {
   opacity: 0;
   transform: translateY(16px);
-  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+  transition:
+    opacity 0.6s var(--ease),
+    transform 0.6s var(--ease);
 }
-.js .reveal.in { opacity: 1; transform: none; }
+.js .reveal.in {
+  opacity: 1;
+  transform: none;
+}
 
 /* ── Responsive ────────────────────────────────────────────── */
 
 /* Short viewports: the greeting line pushes the buttons below the
    fold on laptop screens, so tighten the hero's vertical rhythm. */
 @media (max-height: 820px) {
-  .hero { padding: 6rem 0 2rem; }
-  .lede { margin-top: 1.2rem; padding-top: 1.2rem; }
-  .hero-actions { margin-top: 1.3rem; }
-  .giant .greet { margin-bottom: 0.3em; }
+  .hero {
+    padding: 6rem 0 2rem;
+  }
+  .lede {
+    margin-top: 1.2rem;
+    padding-top: 1.2rem;
+  }
+  .hero-actions {
+    margin-top: 1.3rem;
+  }
+  .giant .greet {
+    margin-bottom: 0.3em;
+  }
 }
 
 @media (max-width: 980px) {
@@ -717,32 +983,70 @@ main {
     align-content: center;
     padding-top: 7rem;
   }
-  .hero-shapes { max-width: 240px; justify-self: start; order: -1; }
-  .card-wide { grid-column: auto; }
-  .card-wide .card-media { aspect-ratio: 16 / 9; }
+  .hero-shapes {
+    max-width: 240px;
+    justify-self: start;
+    order: -1;
+  }
+  .card-wide {
+    grid-column: auto;
+  }
+  .card-wide .card-media {
+    aspect-ratio: 16 / 9;
+  }
 }
 
 @media (max-width: 760px) {
-  .nav { display: none; }
-  .tl { grid-template-columns: 1fr; gap: 0.5rem; }
-  .tl-when { display: flex; align-items: baseline; gap: 0.5rem; }
-  .tl-when i { margin-top: 0; }
-  .contact-wrap { grid-template-columns: 1fr; }
-  .foot { justify-content: flex-start; }
+  .nav {
+    display: none;
+  }
+  .tl {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .tl-when {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .tl-when i {
+    margin-top: 0;
+  }
+  .contact-wrap {
+    grid-template-columns: 1fr;
+  }
+  .foot {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 480px) {
-  .mark-name { display: none; }
-  .timeline { padding-left: 1.8rem; }
-  .timeline::before { left: 0.35rem; }
-  .tl::before { left: -1.45rem; }
+  .mark-name {
+    display: none;
+  }
+  .timeline {
+    padding-left: 1.8rem;
+  }
+  .timeline::before {
+    left: 0.35rem;
+  }
+  .tl::before {
+    left: -1.45rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
-  .js .reveal { opacity: 1; transform: none; }
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
