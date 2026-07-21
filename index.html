@@ -1,257 +1,463 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Tam Vu — Software Engineer. Yale CS & Statistics graduate. Building at Brighterway (YC S24). Creator of playanagrams.com.">
-    <title>Tam Vu</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <nav class="navbar" id="navbar">
-        <a href="#" class="nav-logo" onclick="showSection('home'); return false;">tam vu</a>
-        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        <ul class="nav-links" id="nav-links">
-            <li><a href="#" class="nav-link active" data-section="home">Home</a></li>
-            <li><a href="#" class="nav-link" data-section="experience">Experience</a></li>
-            <li><a href="#" class="nav-link" data-section="projects">Projects</a></li>
-            <li><a href="#" class="nav-link" data-section="skills">Skills</a></li>
-            <li><a href="#" class="nav-link" data-section="contact">Contact</a></li>
-        </ul>
-    </nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Tam Vu — software engineer in San Francisco. Building AI document infrastructure at Brighterway (YC S24). Yale CS & Statistics. Creator of playanagrams.com."
+    />
+    <meta name="theme-color" content="#0d0d0d" />
+    <title>Tam Vu — Software Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a href="#top" class="mark">
+        <span class="mark-glyph">TV</span>
+        <span class="mark-name">Tam Vu</span>
+      </a>
+      <nav class="nav">
+        <a href="#work"><i>01</i> Work</a>
+        <a href="#projects"><i>02</i> Projects</a>
+        <a href="#stack"><i>03</i> Stack</a>
+        <a href="#contact"><i>04</i> Contact</a>
+      </nav>
+      <a class="status" href="#contact">Open to talk</a>
+    </header>
 
-    <main class="main-content">
-        <!-- Home -->
-        <section id="home" class="section active">
-            <canvas id="hero-canvas" class="hero-canvas" aria-hidden="true"></canvas>
-            <div class="hero-glow" id="hero-glow" aria-hidden="true"></div>
-            <div class="hero">
-                <div class="hero-text">
-                    <p class="hero-greeting">Hello, I'm</p>
-                    <h1 id="header" class="hero-name"></h1>
-                    <p id="desc1" class="hero-line"></p>
-                    <p id="desc2" class="hero-line"></p>
-                    <p id="desc3" class="hero-line"></p>
-                    <p id="desc4" class="hero-line"></p>
-                    <p id="desc5" class="hero-line"></p>
-                    <div class="hero-actions" id="hero-actions" style="opacity: 0;">
-                        <a href="/Resume_Tam_Vu_2026.pdf" target="_blank" class="btn btn-primary">Resume</a>
-                        <a href="https://github.com/taaaaam" target="_blank" class="btn btn-icon" aria-label="GitHub">
-                            <img src="github.png" alt="" class="github-icon">
-                        </a>
-                        <a href="https://www.linkedin.com/in/tam-vu1" target="_blank" class="btn btn-icon" aria-label="LinkedIn">
-                            <img src="linkedin.svg" alt="">
-                        </a>
-                    </div>
-                </div>
-                <div class="hero-image">
-                    <div class="image-ring">
-                        <img src="me.JPG" alt="Tam Vu">
-                    </div>
-                </div>
+    <main id="top">
+      <!-- ───────────────────────────── HERO ───────────────────────────── -->
+      <section class="hero">
+        <div class="hero-left">
+          <p class="eyeline reveal">
+            <span>Software Engineer</span>
+            <b>/</b>
+            <span>San Francisco</span>
+          </p>
+
+          <h1 class="giant reveal">
+            <span class="line">Tam</span>
+            <span class="line">Vu<em>.</em></span>
+          </h1>
+
+          <p class="lede reveal">I like making AI stuff and games.</p>
+
+          <div class="hero-actions reveal">
+            <a
+              class="btn btn-solid"
+              href="/Resume_Tam_Vu_2026.pdf"
+              target="_blank"
+              rel="noopener"
+              >Résumé</a
+            >
+            <a
+              class="btn"
+              href="https://github.com/taaaaam"
+              target="_blank"
+              rel="noopener"
+              >GitHub</a
+            >
+            <a
+              class="btn"
+              href="https://www.linkedin.com/in/tam-vu1"
+              target="_blank"
+              rel="noopener"
+              >LinkedIn</a
+            >
+          </div>
+        </div>
+
+        <!-- Static Bauhaus composition: circle, quarter-round, bar, square, ring. -->
+        <div class="hero-shapes reveal" aria-hidden="true">
+          <span class="sh sh-circle"></span>
+          <span class="sh sh-quarter"></span>
+          <span class="sh sh-bar"></span>
+          <span class="sh sh-square"></span>
+          <span class="sh sh-ring"></span>
+        </div>
+      </section>
+
+      <!-- ───────────────────────────── WORK ───────────────────────────── -->
+      <section id="work" class="band">
+        <div class="band-head reveal">
+          <span class="index">01</span>
+          <h2>Work</h2>
+        </div>
+
+        <ol class="timeline">
+          <li class="tl reveal">
+            <span class="tl-when">2025<i>now</i></span>
+            <div class="tl-body">
+              <h3>Software Engineer</h3>
+              <p class="tl-org">
+                <a href="https://brighterway.ai" target="_blank" rel="noopener"
+                  >Brighterway</a
+                >
+                <span class="tag">YC S24</span>
+              </p>
+              <p class="tl-copy">
+                Building AI document infrastructure for healthcare. Halved our
+                inference cost while making the document splitter more accurate,
+                took client capacity 10× with HIPAA-compliant ingestion APIs,
+                and shipped a voice agent that takes patient histories alongside
+                physicians.
+              </p>
             </div>
-        </section>
+          </li>
 
-        <!-- Experience -->
-        <section id="experience" class="section">
-            <div class="section-inner">
-                <h2 class="section-title">Experience</h2>
-                <div class="timeline">
-                    <article class="timeline-card">
-                        <div class="timeline-meta">
-                            <span class="timeline-date">Jan 2025 — Present</span>
-                            <span class="timeline-location">San Francisco, CA</span>
-                        </div>
-                        <h3>Software Engineer · <a href="https://brighterway.ai" target="_blank">Brighterway</a> <span class="badge">YC S24</span></h3>
-                        <ul>
-                            <li>Implemented an AI document splitter workflow that reduced infrastructure costs by 50% while increasing model accuracy, using LLMs and cloud services (AWS Bedrock, Azure, GCP).</li>
-                            <li>Designed scalable HIPAA-compliant backend APIs that increased client processing capacity by 10× through automated enterprise document ingestion.</li>
-                            <li>Redesigned the production frontend QC pipeline, increasing document verification throughput by 40% and reducing turnaround time by 35%.</li>
-                            <li>Built a production AI voice agent with physicians to automate patient medical history intake, reducing documentation effort.</li>
-                        </ul>
-                    </article>
-
-                    <article class="timeline-card">
-                        <div class="timeline-meta">
-                            <span class="timeline-date">May 2024 — Aug 2024</span>
-                            <span class="timeline-location">New York City, NY</span>
-                        </div>
-                        <h3>Researcher · <a href="https://weill.cornell.edu" target="_blank">Weill Cornell Medicine</a></h3>
-                        <ul>
-                            <li>Improved rim lesion detection accuracy for multiple sclerosis by 8% by developing and training a residual neural network on synthesized rim lesion data with PyTorch, outperforming QSMRim-Net.</li>
-                            <li>Resolved data imbalance by increasing rim lesion count from 177 to 10,000+ via an image augmentation algorithm synthesizing rim lesions from non-lesion data using SciPy and NumPy.</li>
-                            <li>Collaborating with radiology professors and PhD students to draft a first-author paper for publication.</li>
-                        </ul>
-                    </article>
-
-                    <article class="timeline-card">
-                        <div class="timeline-meta">
-                            <span class="timeline-date">May 2023 — Aug 2023</span>
-                            <span class="timeline-location">New Haven, CT</span>
-                        </div>
-                        <h3>Data Science Intern · Yale Center for Biodiversity and Global Change</h3>
-                        <ul>
-                            <li>Developed report generation for species distribution modelling using R and SQL, resulting in 3 additional filters added to the SDM interface on <a href="https://mol.org" target="_blank">mol.org</a>.</li>
-                            <li>Implemented a seasonal feature that models species distribution across seasons, allowing ecologists to track migration patterns.</li>
-                        </ul>
-                    </article>
-                </div>
+          <li class="tl reveal">
+            <span class="tl-when">2024<i>summer</i></span>
+            <div class="tl-body">
+              <h3>Researcher</h3>
+              <p class="tl-org">
+                <a
+                  href="https://weill.cornell.edu"
+                  target="_blank"
+                  rel="noopener"
+                  >Weill Cornell Medicine</a
+                >
+              </p>
+              <p class="tl-copy">
+                Multiple sclerosis lesions are rare enough that models starve
+                for data, so I synthesized them — turning 177 real lesions into
+                10,000+ training samples. The network trained on them beat the
+                published state of the art by 8%. First-author paper in
+                progress.
+              </p>
             </div>
-        </section>
+          </li>
 
-        <!-- Projects -->
-        <section id="projects" class="section">
-            <div class="section-inner">
-                <h2 class="section-title">Projects</h2>
-                <div class="project-grid">
-                    <article class="project-card featured">
-                        <div class="project-header">
-                            <h3><a href="https://playanagrams.com" target="_blank">playanagrams.com</a></h3>
-                            <span class="project-date">Apr 2026 — Present</span>
-                        </div>
-                        <p class="project-desc">Full-stack multiplayer word game built from concept to production — real-time gameplay, ELO matchmaking, server-side anticheat, and hand-drawn visual/audio assets. 5,000+ multiplayer matches and counting.</p>
-                        <a href="https://playanagrams.com" target="_blank" class="site-preview">
-                            <img src="preview-playanagrams.png" alt="playanagrams.com preview">
-                            <span class="site-preview-url">playanagrams.com</span>
-                        </a>
-                        <div class="project-tags">
-                            <span>TypeScript</span><span>React</span><span>Node.js</span><span>WebSockets</span>
-                        </div>
-                    </article>
-
-                    <article class="project-card">
-                        <div class="project-header">
-                            <h3><a href="https://yhack.org" target="_blank">YHack</a></h3>
-                            <span class="project-date">Sep 2021 — May 2025</span>
-                        </div>
-                        <p class="project-desc">Fullstack Lead for Yale's official hackathon. Built the website and participant portal on React and Firebase, attracting 1,000+ hackers and multiple industry sponsors with a $10,000+ prize pool annually.</p>
-                        <div class="project-images">
-                            <img src="yhack.png" alt="YHack website screenshot">
-                            <img src="yhack2.png" alt="YHack design">
-                            <img src="yhack3.png" alt="YHack logo">
-                        </div>
-                        <div class="project-tags">
-                            <span>React</span><span>Firebase</span><span>TypeScript</span><span>Figma</span>
-                        </div>
-                    </article>
-
-                    <article class="project-card">
-                        <div class="project-header">
-                            <h3>Synthetic Rim Lesions</h3>
-                            <span class="project-date">Weill Cornell Research</span>
-                        </div>
-                        <p class="project-desc">Novel method for synthesizing rim lesions on QSM images to solve data imbalance in MS detection. ResNet18 trained on synthetic data outperforms state-of-the-art QSMRim-Net. First-author publication in progress.</p>
-                        <div class="project-tags">
-                            <span>PyTorch</span><span>NumPy</span><span>SciPy</span><span>MATLAB</span>
-                        </div>
-                    </article>
-
-                    <article class="project-card">
-                        <div class="project-header">
-                            <h3><a href="https://mol.org" target="_blank">Map of Life</a></h3>
-                            <span class="project-date">Yale BGC Internship</span>
-                        </div>
-                        <p class="project-desc">Report generation system for species distribution models on mol.org, enabling ecologists to visualize model performance and track species migration across seasons.</p>
-                        <a href="https://mol.org" target="_blank" class="site-preview">
-                            <img src="preview-mol.png" alt="mol.org preview">
-                            <span class="site-preview-url">mol.org</span>
-                        </a>
-                        <div class="project-tags">
-                            <span>R</span><span>SQL</span><span>Python</span><span>REST APIs</span>
-                        </div>
-                    </article>
-
-                    <article class="project-card">
-                        <div class="project-header">
-                            <h3><a href="https://ymeets.com" target="_blank">ymeets.com</a></h3>
-                            <span class="project-date">Yale</span>
-                        </div>
-                        <p class="project-desc">Meeting scheduling application for Yale students and faculty, built with React, MongoDB, and AWS.</p>
-                        <a href="https://ymeets.com" target="_blank" class="site-preview">
-                            <img src="preview-ymeets.png" alt="ymeets.com preview">
-                            <span class="site-preview-url">ymeets.com</span>
-                        </a>
-                        <div class="project-tags">
-                            <span>React</span><span>TypeScript</span><span>MongoDB</span><span>AWS</span>
-                        </div>
-                    </article>
-
-                    <article class="project-card">
-                        <div class="project-header">
-                            <h3>VinBigData</h3>
-                            <span class="project-date">Computer Vision Internship</span>
-                        </div>
-                        <p class="project-desc">Worked on the computer vision team designing and testing deep learning methods for medical image segmentation. Built a 3D U-Net model from scratch for liver lesion segmentation on CT scans.</p>
-                        <img src="vin.JPG" alt="VinBigData liver lesion segmentation" class="project-screenshot">
-                        <div class="project-tags">
-                            <span>Python</span><span>PyTorch</span><span>NumPy</span>
-                        </div>
-                    </article>
-                </div>
+          <li class="tl reveal">
+            <span class="tl-when">2023<i>summer</i></span>
+            <div class="tl-body">
+              <h3>Data Science Intern</h3>
+              <p class="tl-org">
+                <a href="https://bgc.yale.edu/" target="_blank" rel="noopener"
+                  >Yale Center for Biodiversity &amp; Global Change</a
+                >
+              </p>
+              <p class="tl-copy">
+                Built species-distribution reporting for
+                <a href="https://mol.org" target="_blank" rel="noopener"
+                  >mol.org</a
+                >, including seasonal modelling that lets ecologists trace
+                migration across the year.
+              </p>
             </div>
-        </section>
+          </li>
 
-        <!-- Skills -->
-        <section id="skills" class="section">
-            <div class="section-inner">
-                <h2 class="section-title">Skills</h2>
-                <div class="skills-grid">
-                    <div class="skill-group">
-                        <h3>Languages</h3>
-                        <p>Python, JavaScript, TypeScript, Java, C++, C, R, MATLAB, SQL</p>
-                    </div>
-                    <div class="skill-group">
-                        <h3>Technologies</h3>
-                        <p>React, Node.js, Express, AWS, GCP, Azure, PostgreSQL, Docker, PyTorch</p>
-                    </div>
-                    <div class="skill-group">
-                        <h3>Tools</h3>
-                        <p>Git, NumPy, Pandas, SciPy, Firebase, Unity</p>
-                    </div>
-                    <div class="skill-group">
-                        <h3>Education</h3>
-                        <p><strong>Yale University</strong> — BS Computer Science & BS Statistics and Data Science (May 2025)</p>
-                        <p class="skill-note">Teaching Assistant, S&DS 265 — Introductory Machine Learning</p>
-                    </div>
-                </div>
+          <li class="tl reveal">
+            <span class="tl-when">2022<i>summer</i></span>
+            <div class="tl-body">
+              <h3>AI Engineer</h3>
+              <p class="tl-org">VinBigData</p>
+              <p class="tl-copy">
+                On the computer vision team, designing and testing deep learning
+                methods for medical image segmentation — including a 3D U-Net
+                built from scratch to segment liver lesions on CT scans.
+              </p>
             </div>
-        </section>
+          </li>
+        </ol>
+      </section>
 
-        <!-- Contact -->
-        <section id="contact" class="section">
-            <div class="section-inner contact-section">
-                <h2 class="section-title">Contact</h2>
-                <p class="contact-intro">I'm always open to chatting about software, research, or new opportunities.</p>
-                <div class="contact-links">
-                    <a href="mailto:tamvu2104@gmail.com" class="contact-card">
-                        <span class="contact-label">Email</span>
-                        <span class="contact-value">tamvu2104@gmail.com</span>
-                    </a>
-                    <a href="https://www.linkedin.com/in/tam-vu1" target="_blank" class="contact-card contact-icon-card">
-                        <img src="linkedin.svg" alt="LinkedIn" class="contact-icon">
-                        <span class="contact-value">tam-vu1</span>
-                    </a>
-                    <a href="https://github.com/taaaaam" target="_blank" class="contact-card contact-icon-card">
-                        <img src="github.png" alt="GitHub" class="contact-icon github-icon">
-                        <span class="contact-value">taaaaam</span>
-                    </a>
-                    <a href="/Resume_Tam_Vu_2026.pdf" target="_blank" class="contact-card">
-                        <span class="contact-label">Resume</span>
-                        <span class="contact-value">Download PDF</span>
-                    </a>
-                </div>
-                <p class="footer-note">Built from scratch · San Francisco, CA</p>
+      <!-- ─────────────────────────── PROJECTS ─────────────────────────── -->
+      <section id="projects" class="band">
+        <div class="band-head reveal">
+          <span class="index">02</span>
+          <h2>Projects</h2>
+        </div>
+
+        <div class="work-grid">
+          <article class="card card-wide reveal">
+            <a
+              class="card-media"
+              href="https://playanagrams.com"
+              target="_blank"
+              rel="noopener"
+            >
+              <img
+                src="preview-playanagrams.png"
+                alt="playanagrams.com — multiplayer anagram game"
+                loading="lazy"
+              />
+            </a>
+            <div class="card-body">
+              <h3>
+                <a
+                  href="https://playanagrams.com"
+                  target="_blank"
+                  rel="noopener"
+                  >playanagrams.com <span class="go">↗</span></a
+                >
+              </h3>
+              <p>
+                A multiplayer word game built end to end — real-time play, ELO
+                matchmaking, server-side anticheat, and hand-drawn art and
+                sound. Past 5,000 matches.
+              </p>
+              <ul class="tags">
+                <li>TypeScript</li>
+                <li>React</li>
+                <li>Node.js</li>
+                <li>WebSockets</li>
+              </ul>
             </div>
-        </section>
+          </article>
+
+          <article class="card reveal">
+            <a
+              class="card-media"
+              href="https://yhack.org"
+              target="_blank"
+              rel="noopener"
+            >
+              <img src="yhack.png" alt="YHack website" loading="lazy" />
+            </a>
+            <div class="card-body">
+              <h3>
+                <a href="https://yhack.org" target="_blank" rel="noopener"
+                  >YHack <span class="go">↗</span></a
+                >
+              </h3>
+              <p>
+                Website and participant portal for Yale's official hackathon —
+                1,000+ hackers, $10,000+ in prizes each year.
+              </p>
+              <ul class="tags">
+                <li>React</li>
+                <li>Firebase</li>
+                <li>Figma</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <a
+              class="card-media"
+              href="https://ymeets.com"
+              target="_blank"
+              rel="noopener"
+            >
+              <img
+                src="preview-ymeets.png"
+                alt="ymeets.com scheduling app"
+                loading="lazy"
+              />
+            </a>
+            <div class="card-body">
+              <h3>
+                <a href="https://ymeets.com" target="_blank" rel="noopener"
+                  >ymeets.com <span class="go">↗</span></a
+                >
+              </h3>
+              <p>
+                Group scheduling for Yale students and faculty, without the
+                back-and-forth.
+              </p>
+              <ul class="tags">
+                <li>React</li>
+                <li>MongoDB</li>
+                <li>AWS</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <a
+              class="card-media"
+              href="https://mol.org"
+              target="_blank"
+              rel="noopener"
+            >
+              <img
+                src="preview-mol.png"
+                alt="Map of Life species distribution platform"
+                loading="lazy"
+              />
+            </a>
+            <div class="card-body">
+              <h3>
+                <a href="https://mol.org" target="_blank" rel="noopener"
+                  >Map of Life <span class="go">↗</span></a
+                >
+              </h3>
+              <p>
+                Report generation for species distribution models, so ecologists
+                can see how a model performs and how species move.
+              </p>
+              <ul class="tags">
+                <li>R</li>
+                <li>SQL</li>
+                <li>Python</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <div class="card-media card-media-shape">
+              <span class="glyph-circle"></span>
+              <span class="glyph-bar"></span>
+            </div>
+            <div class="card-body">
+              <h3>Synthetic Rim Lesions</h3>
+              <p>
+                A method for synthesizing MS rim lesions on QSM scans to fix a
+                brutal class imbalance — and a ResNet trained on them that beats
+                QSMRim-Net.
+              </p>
+              <ul class="tags">
+                <li>PyTorch</li>
+                <li>NumPy</li>
+                <li>MATLAB</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <div class="card-media">
+              <img
+                src="vin.JPG"
+                alt="The VinBigData computer vision team"
+                loading="lazy"
+              />
+            </div>
+            <div class="card-body">
+              <h3>VinBigData</h3>
+              <p>
+                A 3D U-Net built from scratch for liver lesion segmentation on
+                CT, with the computer vision team.
+              </p>
+              <ul class="tags">
+                <li>Python</li>
+                <li>PyTorch</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ──────────────────────────── STACK ───────────────────────────── -->
+      <section id="stack" class="band">
+        <div class="band-head reveal">
+          <span class="index">03</span>
+          <h2>Stack</h2>
+        </div>
+
+        <div class="stack-grid">
+          <div class="stack-col reveal">
+            <h3>Languages</h3>
+            <ul class="chips">
+              <li>Python</li>
+              <li>TypeScript</li>
+              <li>JavaScript</li>
+              <li>Java</li>
+              <li>C++</li>
+              <li>C</li>
+              <li>R</li>
+              <li>MATLAB</li>
+              <li>SQL</li>
+            </ul>
+          </div>
+          <div class="stack-col reveal">
+            <h3>Systems</h3>
+            <ul class="chips">
+              <li>React</li>
+              <li>Node.js</li>
+              <li>Express</li>
+              <li>PostgreSQL</li>
+              <li>Docker</li>
+              <li>AWS</li>
+              <li>GCP</li>
+              <li>Azure</li>
+              <li>Firebase</li>
+            </ul>
+          </div>
+          <div class="stack-col reveal">
+            <h3>Machine Learning</h3>
+            <ul class="chips">
+              <li>PyTorch</li>
+              <li>NumPy</li>
+              <li>Pandas</li>
+              <li>SciPy</li>
+              <li>LLM pipelines</li>
+              <li>Bedrock</li>
+            </ul>
+          </div>
+          <div class="stack-col reveal">
+            <h3>Education</h3>
+            <p class="edu-school">Yale University</p>
+            <p class="edu-detail">
+              BS Computer Science<br />BS Statistics &amp; Data Science
+              <span>May 2025</span>
+            </p>
+            <p class="edu-note">
+              Teaching assistant — S&amp;DS 265, Introductory Machine Learning
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────────────────── CONTACT ──────────────────────────── -->
+      <section id="contact" class="band band-contact">
+        <div class="band-head reveal">
+          <span class="index">04</span>
+          <h2>Contact</h2>
+        </div>
+
+        <a class="mailto reveal" href="mailto:tamvu2104@gmail.com">
+          <span class="mailto-label">Email me</span>
+          <span class="mailto-value">tamvu2104@gmail.com</span>
+        </a>
+
+        <div class="contact-wrap">
+          <p class="contact-copy reveal">
+            Always up for a conversation about backend systems, applied ML, or
+            whatever you’re building.
+          </p>
+          <ul class="contact-links reveal">
+            <li>
+              <a
+                href="https://github.com/taaaaam"
+                target="_blank"
+                rel="noopener"
+                >GitHub <span>taaaaam</span></a
+              >
+            </li>
+            <li>
+              <a
+                href="https://www.linkedin.com/in/tam-vu1"
+                target="_blank"
+                rel="noopener"
+                >LinkedIn <span>tam-vu1</span></a
+              >
+            </li>
+            <li>
+              <a href="/Resume_Tam_Vu_2026.pdf" target="_blank" rel="noopener"
+                >Résumé <span>PDF, 2026</span></a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <footer class="foot">
+          <span>© 2026 Tam Vu</span>
+          <span>Hand-built · no template</span>
+          <span>San Francisco, CA</span>
+        </footer>
+      </section>
     </main>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
