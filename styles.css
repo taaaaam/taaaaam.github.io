@@ -71,13 +71,12 @@ img { display: block; max-width: 100%; }
 .mark-glyph {
   display: grid;
   place-items: center;
-  width: 26px; height: 26px;
+  width: 28px; height: 28px;
   background: var(--black);
-  color: var(--yellow);
-  font-weight: 500;
-  font-size: 0.7rem;
+  color: var(--yellow);          /* the banana strokes use currentColor */
   transition: background 0.2s, color 0.2s;
 }
+.mark-glyph svg { width: 20px; height: 20px; display: block; }
 .mark:hover .mark-glyph { background: var(--white); color: var(--black); }
 .mark-name {
   font-family: var(--display);
@@ -153,6 +152,15 @@ main {
 }
 .giant .line { display: block; }
 .giant em { font-style: normal; color: var(--white); }
+/* the spoken lead-in — same sentence, quieter voice */
+.giant .greet {
+  display: block;
+  font-size: clamp(1.1rem, 0.5rem + 2vw, 2.1rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  margin-bottom: 0.45em;
+}
 
 .lede {
   margin-top: clamp(1.5rem, 3vw, 2.2rem);
@@ -189,90 +197,80 @@ main {
 }
 .btn-solid:hover { background: transparent; color: var(--black); }
 
-/* Geometric composition. The parts fly in and lock together once,
-   then hold still — see the assembly keyframes further down. */
+/* ── Bauhaus self-portrait ─────────────────────────────────────
+   Just the head: a circle, an angular swept crop, and ringed
+   eyes. The pupils are driven by script.js; everything else
+   assembles once when the hero scrolls in.                   */
+
 .hero-shapes {
   position: relative;
   aspect-ratio: 1;
-  max-width: 420px;
+  max-width: 400px;
   width: 100%;
   justify-self: end;
 }
-.sh { position: absolute; display: block; }
-.sh-circle {
-  width: 58%; height: 58%;
-  top: 0; right: 0;
-  background: var(--black);
-  border-radius: 50%;
-}
-.sh-quarter {
-  width: 42%; height: 42%;
-  left: 0; top: 24%;
-  background: var(--white);
-  border-radius: 100% 0 0 0;
-}
-.sh-bar {
-  width: 100%; height: 10%;
-  left: 0; bottom: 26%;
-  background: var(--black);
-}
-.sh-square {
-  width: 26%; height: 26%;
-  left: 16%; bottom: 0;
-  background: var(--white);
-}
-.sh-ring {
-  width: 30%; height: 30%;
-  right: 8%; bottom: 0;
-  border: 7px solid var(--black);
-  border-radius: 50%;
+.face { width: 100%; height: 100%; display: block; }
+
+.fc-head, .fc-hair, .fc-eye, .fc-nose, .fc-mouth {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-/* ── Hero assembly ─────────────────────────────────────────────
-   The bar lays down the baseline first, then each piece arrives
-   from the direction it "comes from" and settles with a slight
-   overshoot, as if snapping into the composition.            */
+.fc-head   { fill: var(--white); }
+.fc-hair   { fill: var(--black); }
+.fc-socket { fill: #fff; stroke: var(--black); stroke-width: 2.2; }
+.fc-pupil  { fill: var(--black); }
+.fc-nose   { fill: var(--black); }
+.fc-mouth {
+  fill: none;
+  stroke: var(--black);
+  stroke-width: 3.4;
+  stroke-linecap: round;
+}
 
-.js .hero-shapes { opacity: 1; transform: none; }   /* parts animate, not the frame */
-.js .hero-shapes .sh { opacity: 0; }
-.js .hero-shapes.in .sh {
-  animation-duration: 0.75s;
+/* ── Assembly ──────────────────────────────────────────────────
+   Head drops in, the crop slides on, then the features pop on
+   in reading order.                                          */
+
+.js .hero-shapes { opacity: 1; transform: none; }  /* parts animate, not the frame */
+.js .fc-head,
+.js .fc-hair,
+.js .fc-eye,
+.js .fc-nose,
+.js .fc-mouth { opacity: 0; }
+
+.js .hero-shapes.in .fc-head,
+.js .hero-shapes.in .fc-hair,
+.js .hero-shapes.in .fc-eye,
+.js .hero-shapes.in .fc-nose,
+.js .hero-shapes.in .fc-mouth {
+  animation-duration: 0.7s;
   animation-fill-mode: forwards;
   animation-timing-function: cubic-bezier(0.2, 1.35, 0.5, 1);
 }
 
-.js .hero-shapes.in .sh-bar     { animation-name: lay-bar;    animation-delay: 0.05s;
-                                  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
-.js .hero-shapes.in .sh-circle  { animation-name: drop-in;    animation-delay: 0.30s; }
-.js .hero-shapes.in .sh-quarter { animation-name: swing-in;   animation-delay: 0.46s; }
-.js .hero-shapes.in .sh-square  { animation-name: rise-in;    animation-delay: 0.60s; }
-.js .hero-shapes.in .sh-ring    { animation-name: pop-in;     animation-delay: 0.74s; }
-
-@keyframes lay-bar {
-  from { opacity: 1; transform: scaleX(0); }
-  to   { opacity: 1; transform: scaleX(1); }
-}
-.sh-bar { transform-origin: left center; }
+.js .hero-shapes.in .fc-head  { animation-name: drop-in;  animation-delay: 0.05s; }
+.js .hero-shapes.in .fc-hair  { animation-name: hair-on;  animation-delay: 0.30s; }
+.js .hero-shapes.in .fc-eye-l { animation-name: pop-in;   animation-delay: 0.52s; }
+.js .hero-shapes.in .fc-eye-r { animation-name: pop-in;   animation-delay: 0.62s; }
+.js .hero-shapes.in .fc-nose  { animation-name: drop-in;  animation-delay: 0.72s; }
+.js .hero-shapes.in .fc-mouth { animation-name: mouth-on; animation-delay: 0.82s; }
 
 @keyframes drop-in {
-  from { opacity: 0; transform: translateY(-160%); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(-38px); }
+  to   { opacity: 1; transform: none; }
 }
-
-@keyframes swing-in {
-  from { opacity: 0; transform: rotate(-115deg) scale(0.7); }
-  to   { opacity: 1; transform: rotate(0deg) scale(1); }
+@keyframes hair-on {
+  from { opacity: 0; transform: translateY(-26px) rotate(-8deg); }
+  to   { opacity: 1; transform: none; }
 }
-.sh-quarter { transform-origin: bottom right; }
-
-@keyframes rise-in {
-  from { opacity: 0; transform: translateY(190%); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 @keyframes pop-in {
   from { opacity: 0; transform: scale(0); }
   to   { opacity: 1; transform: scale(1); }
+}
+@keyframes mouth-on {
+  from { opacity: 0; transform: scaleX(0.2); }
+  to   { opacity: 1; transform: none; }
 }
 
 /* ── Section heads ─────────────────────────────────────────── */
@@ -405,7 +403,15 @@ main {
   font-family: var(--mono);
   font-size: 0.8rem;
   color: var(--dim);
-  margin: 0.35rem 0 0.8rem;
+  margin: 0.35rem 0 0.25rem;
+}
+.tl-loc {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 0.8rem;
 }
 .tl-org a, .tl-copy a {
   color: var(--ink);
@@ -695,6 +701,15 @@ main {
 .js .reveal.in { opacity: 1; transform: none; }
 
 /* ── Responsive ────────────────────────────────────────────── */
+
+/* Short viewports: the greeting line pushes the buttons below the
+   fold on laptop screens, so tighten the hero's vertical rhythm. */
+@media (max-height: 820px) {
+  .hero { padding: 6rem 0 2rem; }
+  .lede { margin-top: 1.2rem; padding-top: 1.2rem; }
+  .hero-actions { margin-top: 1.3rem; }
+  .giant .greet { margin-bottom: 0.3em; }
+}
 
 @media (max-width: 980px) {
   .hero {
