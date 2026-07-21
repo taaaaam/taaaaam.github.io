@@ -78,8 +78,34 @@ function initEyes() {
   });
 }
 
+/* ── Card videos — play only while on screen ───────────────────
+   Autoplaying muted video is cheap, but only worth spending while
+   the card is visible. Under reduced-motion we never play; the
+   poster frame stands in.                                     */
+
+function initCardVideos() {
+  const videos = [...document.querySelectorAll('.card-video')];
+  if (!videos.length) return;
+
+  if (REDUCED) return; // poster stays, no motion
+
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) {
+      const v = e.target;
+      if (e.isIntersecting) {
+        v.play().catch(() => {}); // ignore autoplay rejections
+      } else {
+        v.pause();
+      }
+    }
+  }, { threshold: 0.25 });
+
+  videos.forEach(v => io.observe(v));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initEyes();
+  initCardVideos();
 
   /* Reveal on scroll */
   const revealObserver = new IntersectionObserver((entries, obs) => {
