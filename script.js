@@ -78,6 +78,89 @@ function initEyes() {
   });
 }
 
+/* ── Banana bonk ───────────────────────────────────────────────
+   Click the portrait: a banana drops from above the viewport,
+   accelerates under gravity, bonks the head (shake + >.< eyes),
+   then ricochets off to a random side, spinning. Coordinates are
+   viewport px; the impact line is taken from the face's live
+   bounding rect so it works at any layout size.              */
+
+function initBananaBonk() {
+  const svg = document.querySelector('.face');
+  if (!svg) return;
+
+  const BANANA_W = 74;
+  const BANANA_H = BANANA_W * 1.21; // source image is 1591×1920
+  const GRAVITY = 2600;             // px/s²
+  let active = false;
+  let ouchTimer = null;
+
+  function bonk() {
+    svg.classList.remove('bonked');
+    void svg.getBoundingClientRect(); // restart the shake animation
+    svg.classList.add('bonked');
+    clearTimeout(ouchTimer);
+    ouchTimer = setTimeout(() => svg.classList.remove('bonked'), 900);
+  }
+
+  svg.addEventListener('click', () => {
+    // Under reduced motion, skip the projectile but still wince.
+    if (REDUCED) { bonk(); return; }
+    if (active) return;
+    active = true;
+
+    const banana = document.createElement('img');
+    banana.src = 'banana.png';
+    banana.alt = '';
+    banana.className = 'banana-fall';
+    document.body.appendChild(banana);
+
+    const rect = svg.getBoundingClientRect();
+    const headTopY = rect.top + rect.height * 0.1; // just above the hair spikes
+    const dir = Math.random() < 0.5 ? -1 : 1;
+
+    let x = rect.left + rect.width / 2 - BANANA_W / 2;
+    let y = -BANANA_H - 10;
+    let vx = 0, vy = 0, rot = 0, vr = 0;
+    let phase = 'fall';
+    let last = performance.now();
+
+    banana.style.transform = `translate(${x}px, ${y}px)`;
+
+    function frame(now) {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+
+      vy += GRAVITY * dt;
+      x += vx * dt;
+      y += vy * dt;
+      rot += vr * dt;
+
+      if (phase === 'fall' && y + BANANA_H >= headTopY) {
+        phase = 'bounce';
+        vy = -520;                              // pop back up off the head
+        vx = dir * (280 + Math.random() * 180); // and off to one side
+        vr = dir * (360 + Math.random() * 200);
+        bonk();
+      }
+
+      banana.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
+
+      const gone =
+        y > window.innerHeight + BANANA_H ||
+        x < -BANANA_W * 3 ||
+        x > window.innerWidth + BANANA_W * 3;
+      if (gone) {
+        banana.remove();
+        active = false;
+      } else {
+        requestAnimationFrame(frame);
+      }
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
 /* ── Card videos — play only while on screen ───────────────────
    Autoplaying muted video is cheap, but only worth spending while
    the card is visible. Under reduced-motion we never play; the
@@ -105,6 +188,7 @@ function initCardVideos() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initEyes();
+  initBananaBonk();
   initCardVideos();
 
   /* Reveal on scroll */
