@@ -110,7 +110,7 @@
              ringed eyes whose pupils track the cursor. -->
         <div class="hero-shapes reveal">
           <svg
-            class="face"
+            class="face face-eyes"
             viewBox="0 0 100 100"
             role="img"
             aria-label="Geometric portrait of Tam Vu"
@@ -153,6 +153,7 @@
           <span class="head-glyph hg-circle" aria-hidden="true"></span>
         </div>
 
+        <div class="work-layout">
         <ol class="timeline">
           <li class="tl reveal">
             <span class="tl-when">2025<i>now</i></span>
@@ -232,6 +233,106 @@
             </div>
           </li>
         </ol>
+
+          <!-- Same head, hunched at a keyboard: the black slab of a
+               monitor glows yellow with a few lines of code. -->
+          <div class="scene work-figure reveal">
+            <svg
+              class="scene-svg"
+              viewBox="0 0 200 200"
+              role="img"
+              aria-label="Tam at a desk, hands tapping the keyboard while code types out on the monitor"
+            >
+              <line class="sc-ground" x1="18" y1="196" x2="182" y2="196" />
+              <!-- desk -->
+              <rect class="sc-ink" x="28" y="162" width="8" height="34" />
+              <rect class="sc-ink" x="164" y="162" width="8" height="34" />
+              <rect class="sc-ink" x="20" y="150" width="164" height="12" rx="2" />
+              <!-- seated body; head sits straight on the shoulders -->
+              <rect class="sc-ink" x="48" y="64" width="52" height="92" rx="22" />
+              <path class="sc-limb" style="stroke-width: 13" d="M55,88 L55,116" />
+              <path class="sc-limb" style="stroke-width: 13" d="M93,88 L93,116" />
+              <!-- head: the hero portrait, reused verbatim -->
+              <g class="type-head">
+                <svg
+                  class="scene-face face-eyes"
+                  viewBox="0 0 100 100"
+                  x="42"
+                  y="12"
+                  width="60"
+                  height="60"
+                  aria-hidden="true"
+                >
+                  <circle class="fc-head" cx="50" cy="50" r="38" />
+                  <path
+                    class="fc-hair"
+                    d="M12,50 A38,38 0 0 1 37,14.3 L66,1 L64.2,14.8 A38,38 0 0 1 88,50 L85,39 L72,31 L58,38 L44,29 L30,40 L14,43 Z"
+                  />
+                  <g class="fc-eye fc-eye-l">
+                    <circle class="fc-socket" cx="37" cy="50" r="8" />
+                    <circle class="fc-pupil" cx="37" cy="50" r="3.6" />
+                  </g>
+                  <g class="fc-eye fc-eye-r">
+                    <circle class="fc-socket" cx="63" cy="50" r="8" />
+                    <circle class="fc-pupil" cx="63" cy="50" r="3.6" />
+                  </g>
+                  <rect class="fc-nose" x="48.6" y="56" width="2.8" height="9" rx="1.4" />
+                  <path class="fc-mouth" d="M41,70 A11,11 0 0 0 59,70" />
+                </svg>
+              </g>
+              <!-- monitor, angled to face the desk; a line types itself -->
+              <g transform="rotate(-6 164 117)">
+                <rect class="sc-ink" x="160" y="140" width="8" height="10" />
+                <rect class="sc-ink" x="150" y="148" width="28" height="5" rx="2" />
+                <rect class="sc-ink" x="136" y="92" width="54" height="48" rx="4" />
+                <rect class="sc-lit" x="146" y="104" width="28" height="3.6" rx="1" />
+                <rect class="sc-lit" x="146" y="113" width="36" height="3.6" rx="1" />
+                <rect
+                  class="sc-lit type-line"
+                  x="146"
+                  y="122"
+                  width="30"
+                  height="3.6"
+                  rx="1"
+                />
+                <rect
+                  class="sc-lit type-caret"
+                  x="179"
+                  y="120"
+                  width="3.6"
+                  height="6"
+                  rx="1"
+                />
+              </g>
+              <!-- coffee, still steaming -->
+              <rect class="sc-paper" x="30" y="132" width="16" height="18" rx="3" />
+              <path class="sc-strap" d="M46,136 a5,5 0 0 1 0,10" />
+              <path class="sc-steam steam-a" d="M36,130 q-3,-4 0,-8 q3,-4 0,-8" />
+              <path class="sc-steam steam-b" d="M42,130 q3,-4 0,-8 q-3,-4 0,-8" />
+              <!-- keyboard -->
+              <rect class="sc-ink" x="52" y="140" width="86" height="12" rx="3" />
+              <rect class="sc-lit" x="58" y="143" width="9" height="3" rx="1" />
+              <rect class="sc-lit" x="70" y="143" width="9" height="3" rx="1" />
+              <rect class="sc-lit" x="82" y="143" width="9" height="3" rx="1" />
+              <rect class="sc-lit" x="94" y="143" width="9" height="3" rx="1" />
+              <rect class="sc-lit" x="106" y="143" width="9" height="3" rx="1" />
+              <rect class="sc-lit" x="64" y="147" width="9" height="3" rx="1" />
+              <rect class="sc-lit" x="76" y="147" width="9" height="3" rx="1" />
+              <rect class="sc-lit" x="88" y="147" width="9" height="3" rx="1" />
+              <rect class="sc-lit" x="100" y="147" width="9" height="3" rx="1" />
+              <!-- forearms + hands, tapping out of phase -->
+              <g class="key-hand-l">
+                <path class="sc-limb" style="stroke-width: 12" d="M55,116 L66,140" />
+                <rect class="sc-ink" x="58" y="135" width="17" height="12" rx="5" />
+              </g>
+              <g class="key-hand-r">
+                <path class="sc-limb" style="stroke-width: 12" d="M93,116 L82,140" />
+                <rect class="sc-ink" x="73" y="135" width="17" height="12" rx="5" />
+              </g>
+            </svg>
+            <span class="scene-cap">// shipping</span>
+          </div>
+        </div>
       </section>
 
       <!-- ─────────────────────────── PROJECTS ─────────────────────────── -->
@@ -506,6 +607,94 @@
               </ul>
             </div>
           </article>
+
+          <!-- Fills the trailing gap in the grid: same head at the anvil,
+               hammer swinging down, metal flashing white, sparks flying. -->
+          <div class="scene projects-figure reveal">
+            <svg
+              class="scene-svg smith"
+              viewBox="0 0 260 220"
+              role="img"
+              aria-label="Tam at a forge, swinging a hammer onto a glowing bar of metal"
+            >
+              <line class="sc-ground" x1="16" y1="202" x2="244" y2="202" />
+              <!-- anvil -->
+              <path class="sc-ink" d="M150,176 L206,176 L216,198 L140,198 Z" />
+              <rect class="sc-ink" x="164" y="150" width="28" height="28" />
+              <path class="sc-ink" d="M146,132 L206,132 L206,150 L146,150 Z" />
+              <path class="sc-ink" d="M206,134 L226,141 L206,148 Z" />
+              <!-- glowing bar on the anvil face, with its white heat-flash -->
+              <rect class="sc-lit" x="150" y="135" width="46" height="10" rx="2" />
+              <rect class="sc-paper smith-flash" x="150" y="135" width="46" height="10" rx="2" />
+              <!-- legs + boots -->
+              <rect class="sc-ink" x="70" y="150" width="16" height="48" rx="8" />
+              <rect class="sc-ink" x="92" y="150" width="16" height="48" rx="8" />
+              <rect class="sc-ink" x="62" y="194" width="30" height="10" rx="5" />
+              <rect class="sc-ink" x="90" y="194" width="30" height="10" rx="5" />
+              <!-- torso, leather apron and bib straps; head sits on the shoulders -->
+              <rect class="sc-ink" x="64" y="78" width="44" height="84" rx="21" />
+              <rect class="sc-paper" x="74" y="104" width="26" height="54" rx="10" />
+              <path class="sc-strap" d="M80,105 L80,90 M94,105 L94,90" />
+              <!-- front arm holding the work with tongs -->
+              <path class="sc-limb" style="stroke-width: 13" d="M106,96 L128,112 L148,120" />
+              <circle class="sc-ink" cx="148" cy="120" r="7" />
+              <path class="sc-tong" d="M146,120 L160,126 M148,124 L160,131" />
+              <!-- head: the hero portrait, reused verbatim -->
+              <g class="smith-head">
+                <svg
+                  class="scene-face face-eyes"
+                  viewBox="0 0 100 100"
+                  x="54"
+                  y="22"
+                  width="64"
+                  height="64"
+                  aria-hidden="true"
+                >
+                  <circle class="fc-head" cx="50" cy="50" r="38" />
+                  <path
+                    class="fc-hair"
+                    d="M12,50 A38,38 0 0 1 37,14.3 L66,1 L64.2,14.8 A38,38 0 0 1 88,50 L85,39 L72,31 L58,38 L44,29 L30,40 L14,43 Z"
+                  />
+                  <g class="fc-eye fc-eye-l">
+                    <circle class="fc-socket" cx="37" cy="50" r="8" />
+                    <circle class="fc-pupil" cx="37" cy="50" r="3.6" />
+                  </g>
+                  <g class="fc-eye fc-eye-r">
+                    <circle class="fc-socket" cx="63" cy="50" r="8" />
+                    <circle class="fc-pupil" cx="63" cy="50" r="3.6" />
+                  </g>
+                  <rect class="fc-nose" x="48.6" y="56" width="2.8" height="9" rx="1.4" />
+                  <path class="fc-mouth" d="M41,70 A11,11 0 0 0 59,70" />
+                </svg>
+              </g>
+              <!-- hammer arm: swings about the shoulder -->
+              <g class="smith-arm">
+                <path class="sc-limb" style="stroke-width: 13" d="M72,96 L96,104 L128,110" />
+                <circle class="sc-ink" cx="128" cy="110" r="7" />
+                <path class="sc-limb" style="stroke-width: 7" d="M128,110 L176,126" />
+                <rect
+                  class="sc-ink"
+                  x="167"
+                  y="111"
+                  width="18"
+                  height="30"
+                  rx="4"
+                  transform="rotate(22 176 126)"
+                />
+              </g>
+              <!-- sparks, flashing on impact -->
+              <g class="smith-sparks">
+                <path
+                  class="sc-spark"
+                  d="M178,132 L178,114 M168,133 L156,120 M188,133 L200,121 M162,136 L147,132 M194,135 L209,132"
+                />
+                <circle class="sc-ink" cx="170" cy="110" r="2" />
+                <circle class="sc-ink" cx="188" cy="112" r="2" />
+                <circle class="sc-ink" cx="179" cy="105" r="1.6" />
+              </g>
+            </svg>
+            <span class="scene-cap">// at the forge</span>
+          </div>
         </div>
       </section>
 

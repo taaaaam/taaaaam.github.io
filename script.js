@@ -13,9 +13,15 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
    layout-independent.                                        */
 
 function initEyes() {
-  const svg = document.querySelector('.face');
-  if (!svg || REDUCED) return;
+  if (REDUCED) return;
+  // Every portrait on the page follows the cursor — the hero head and
+  // each of the scene heads (forge, desk, phone). Each is wired up
+  // independently against its own bounding box, so they all aim true
+  // regardless of where they sit.
+  document.querySelectorAll('.face-eyes').forEach(setupEyes);
+}
 
+function setupEyes(svg) {
   const pupils = [...svg.querySelectorAll('.fc-pupil')].map(el => ({
     el,
     // rest position, in user units
