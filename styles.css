@@ -1476,6 +1476,64 @@ main {
   border-top: 3px solid var(--black);
 }
 
+.blog-page {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 6rem var(--gut) 4rem;
+}
+
+.blog-form-mode {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 0.75rem;
+}
+
+.blog-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.blog-post-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.blog-edit,
+.blog-delete {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dim);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.blog-edit:hover,
+.blog-delete:hover {
+  color: var(--black);
+}
+
+.blog-logout-btn {
+  cursor: pointer;
+  font: inherit;
+}
+
+.blog-logout-btn:hover {
+  background: transparent;
+  color: var(--black);
+}
+
 .blog-status {
   font-family: var(--mono);
   font-size: 0.72rem;
@@ -1555,22 +1613,8 @@ main {
   white-space: pre-wrap;
 }
 
-.blog-delete {
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--dim);
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.blog-delete:hover {
-  color: var(--black);
+.blog-post-actions {
+  margin-top: 0.25rem;
 }
 
 .blog-empty {

@@ -29,3 +29,11 @@ create policy "Admins delete posts"
   on blog_posts for delete
   to authenticated
   using (true);
+
+drop policy if exists "Admins update posts" on blog_posts;
+
+create policy "Admins update posts"
+  on blog_posts for update
+  to authenticated
+  using (true)
+  with check (true);

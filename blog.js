@@ -4,10 +4,16 @@ const ADMIN_HASH = '323f53abf99d49ca91320286d713abc6bcf1c16eff28e3774946b6452da0
 const ADMIN_SESSION_KEY = 'tamvu_admin';
 const LOCAL_POSTS_KEY = 'tamvu_blog_posts';
 const CLICK_WINDOW_MS = 900;
+const BLOG_PATH = '/blog.html';
 
 let supabaseClient = null;
 let clickCount = 0;
 let clickTimer = null;
+let postsCache = [];
+
+function isBlogPage() {
+  return document.body.dataset.page === 'blog';
+}
 
 async function sha256(text) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
@@ -42,13 +48,17 @@ function setAdmin(on) {
   syncAdminUI();
 }
 
+function goToBlog() {
+  window.location.href = BLOG_PATH;
+}
+
 function syncAdminUI() {
   const on = isAdmin();
   document.querySelectorAll('.is-admin-only').forEach(el => {
     el.hidden = !on;
   });
   document.body.classList.toggle('admin-mode', on);
-  if (on) loadPosts();
+  if (on && isBlogPage()) loadPosts();
   window.dispatchEvent(new Event('tamvu-admin-change'));
 }
 
@@ -80,6 +90,7 @@ async function logout() {
   const sb = initSupabase();
   if (sb) await sb.auth.signOut();
   setAdmin(false);
+  window.location.href = '/';
 }
 
 function readLocalPosts() {
@@ -131,6 +142,26 @@ async function savePost({ title, body, post_date }) {
   return post;
 }
 
+async function updatePost(id, { title, body, post_date }) {
+  const sb = initSupabase();
+  if (sb && isAdmin()) {
+    const { data, error } = await sb
+      .from('blog_posts')
+      .update({ title, body, post_date })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  const posts = readLocalPosts().map(p =>
+    p.id === id ? { ...p, title, body, post_date } : p
+  );
+  writeLocalPosts(posts);
+  return posts.find(p => p.id === id);
+}
+
 async function removePost(id) {
   const sb = initSupabase();
   if (sb && isAdmin()) {
@@ -154,10 +185,48 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+function clearEditForm() {
+  const form = document.getElementById('blog-form');
+  const editId = document.getElementById('blog-edit-id');
+  const mode = document.getElementById('blog-form-mode');
+  const submitBtn = document.getElementById('blog-submit-btn');
+  const cancelBtn = document.getElementById('blog-cancel-edit');
+  if (!form || !editId) return;
+
+  form.reset();
+  editId.value = '';
+  if (mode) mode.textContent = 'New post';
+  if (submitBtn) submitBtn.textContent = 'Publish';
+  if (cancelBtn) cancelBtn.hidden = true;
+
+  const dateInput = document.getElementById('blog-date-input');
+  if (dateInput) dateInput.value = new Date().toISOString().slice(0, 10);
+}
+
+function startEdit(post) {
+  const editId = document.getElementById('blog-edit-id');
+  const mode = document.getElementById('blog-form-mode');
+  const submitBtn = document.getElementById('blog-submit-btn');
+  const cancelBtn = document.getElementById('blog-cancel-edit');
+  if (!editId) return;
+
+  editId.value = post.id;
+  document.getElementById('blog-date-input').value = post.post_date;
+  document.getElementById('blog-title-input').value = post.title;
+  document.getElementById('blog-body-input').value = post.body;
+  if (mode) mode.textContent = 'Editing post';
+  if (submitBtn) submitBtn.textContent = 'Save changes';
+  if (cancelBtn) cancelBtn.hidden = false;
+
+  document.getElementById('blog-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function renderPosts(posts) {
   const list = document.getElementById('blog-list');
   const empty = document.getElementById('blog-empty');
   if (!list) return;
+
+  postsCache = posts;
 
   if (!posts.length) {
     list.innerHTML = '';
@@ -169,18 +238,30 @@ function renderPosts(posts) {
   list.innerHTML = posts
     .map(
       post => `
-    <article class="blog-post reveal in" data-id="${post.id}">
+    <article class="blog-post" data-id="${post.id}">
       <time class="blog-date" datetime="${post.post_date}">${formatDate(post.post_date)}</time>
       <h3 class="blog-title">${escapeHtml(post.title)}</h3>
       <div class="blog-body">${escapeHtml(post.body)}</div>
-      <button type="button" class="blog-delete" data-id="${post.id}" aria-label="Delete post">Delete</button>
+      <div class="blog-post-actions">
+        <button type="button" class="blog-edit" data-id="${post.id}">Edit</button>
+        <button type="button" class="blog-delete" data-id="${post.id}">Delete</button>
+      </div>
     </article>`
     )
     .join('');
 
+  list.querySelectorAll('.blog-edit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const post = postsCache.find(p => p.id === btn.dataset.id);
+      if (post) startEdit(post);
+    });
+  });
+
   list.querySelectorAll('.blog-delete').forEach(btn => {
     btn.addEventListener('click', async () => {
       if (!confirm('Delete this post?')) return;
+      const editingId = document.getElementById('blog-edit-id')?.value;
+      if (editingId === btn.dataset.id) clearEditForm();
       await removePost(btn.dataset.id);
       await loadPosts();
     });
@@ -188,7 +269,7 @@ function renderPosts(posts) {
 }
 
 async function loadPosts() {
-  if (!isAdmin()) return;
+  if (!isAdmin() || !isBlogPage()) return;
   const status = document.getElementById('blog-status');
   if (status) status.textContent = 'Loading…';
   try {
@@ -221,6 +302,15 @@ function closeLoginModal() {
   if (modal) modal.hidden = true;
 }
 
+function onLoginSuccess() {
+  closeLoginModal();
+  if (isBlogPage()) {
+    loadPosts();
+  } else {
+    goToBlog();
+  }
+}
+
 function initAdminGate() {
   const glyph = document.querySelector('.mark-glyph');
   if (!glyph) return;
@@ -237,7 +327,7 @@ function initAdminGate() {
     if (clickCount >= 3) {
       clickCount = 0;
       if (isAdmin()) {
-        document.getElementById('blog')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!isBlogPage()) goToBlog();
       } else {
         openLoginModal();
       }
@@ -250,8 +340,7 @@ function initAdminGate() {
     const err = document.getElementById('admin-error');
     const result = await tryLogin(input.value);
     if (result.ok) {
-      closeLoginModal();
-      document.getElementById('blog')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      onLoginSuccess();
     } else {
       err.textContent = result.message;
       input.select();
@@ -262,40 +351,40 @@ function initAdminGate() {
   document.getElementById('admin-modal')?.addEventListener('click', e => {
     if (e.target.id === 'admin-modal') closeLoginModal();
   });
+}
 
-  document.getElementById('blog-logout')?.addEventListener('click', async () => {
-    await logout();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+function initBlogPage() {
+  document.getElementById('blog-logout')?.addEventListener('click', logout);
+
+  document.getElementById('blog-cancel-edit')?.addEventListener('click', clearEditForm);
 
   document.getElementById('blog-form')?.addEventListener('submit', async e => {
     e.preventDefault();
     const title = document.getElementById('blog-title-input').value.trim();
     const body = document.getElementById('blog-body-input').value.trim();
     const post_date = document.getElementById('blog-date-input').value;
+    const editId = document.getElementById('blog-edit-id').value;
     if (!title || !body || !post_date) return;
 
-    const btn = e.target.querySelector('button[type="submit"]');
+    const btn = document.getElementById('blog-submit-btn');
     btn.disabled = true;
     try {
-      await savePost({ title, body, post_date });
-      e.target.reset();
-      document.getElementById('blog-date-input').value = new Date().toISOString().slice(0, 10);
+      if (editId) {
+        await updatePost(editId, { title, body, post_date });
+      } else {
+        await savePost({ title, body, post_date });
+      }
+      clearEditForm();
       await loadPosts();
     } catch (err) {
-      alert('Could not save post.');
+      alert(editId ? 'Could not update post.' : 'Could not save post.');
       console.error(err);
     } finally {
       btn.disabled = false;
     }
   });
 
-  const dateInput = document.getElementById('blog-date-input');
-  if (dateInput && !dateInput.value) {
-    dateInput.value = new Date().toISOString().slice(0, 10);
-  }
-
-  syncAdminUI();
+  clearEditForm();
 }
 
 async function restoreSession() {
@@ -306,7 +395,24 @@ async function restoreSession() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+async function guardBlogPage() {
+  if (!isBlogPage()) return;
+  await restoreSession();
+  if (!isAdmin()) {
+    window.location.replace('/');
+    return;
+  }
+  initBlogPage();
+  loadPosts();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
   initAdminGate();
-  restoreSession();
+
+  if (isBlogPage()) {
+    await guardBlogPage();
+  } else {
+    await restoreSession();
+    syncAdminUI();
+  }
 });
