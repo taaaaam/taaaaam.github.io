@@ -214,20 +214,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* Hairline under the bar once scrolled + nav scroll-spy */
   const topbar = document.querySelector('.topbar');
-  const navLinks = [...document.querySelectorAll('.nav a')];
-  const sections = navLinks
-    .map(a => document.querySelector(a.getAttribute('href')))
-    .filter(Boolean);
+  const nav = document.querySelector('.nav');
+
+  function navLinks() {
+    return nav ? [...nav.querySelectorAll('a[href^="#"]:not([hidden])')] : [];
+  }
+
+  const sectionIds = () => navLinks().map(a => a.getAttribute('href'));
 
   let ticking = false;
   function onScroll() {
     topbar.classList.toggle('stuck', window.scrollY > 20);
 
     let current = null;
-    for (const section of sections) {
-      if (section.getBoundingClientRect().top <= window.innerHeight * 0.4) current = section;
+    for (const id of sectionIds()) {
+      const section = document.querySelector(id);
+      if (section && !section.hidden && section.getBoundingClientRect().top <= window.innerHeight * 0.4) {
+        current = section;
+      }
     }
-    navLinks.forEach(a =>
+    navLinks().forEach(a =>
       a.classList.toggle('on', current && a.getAttribute('href') === '#' + current.id));
     ticking = false;
   }
@@ -237,6 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(onScroll);
   }, { passive: true });
   onScroll();
+
+  window.addEventListener('tamvu-admin-change', onScroll);
 
   /* In-page nav, offset for the fixed bar */
   document.querySelectorAll('a[href^="#"]').forEach(link => {
