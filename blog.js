@@ -11,7 +11,11 @@ let supabaseClient = null;
 let clickCount = 0;
 let clickTimer = null;
 let postsCache = [];
-let composeType = 'post';
+let postEditId = null;
+let postEditThumbUrl = '';
+let postEditThumbFile = null;
+let postEditReturnToRead = false;
+let journalEditId = null;
 
 function isBlogPage() {
   return document.body.dataset.page === 'blog';
@@ -208,110 +212,265 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-function setComposeType(type) {
-  composeType = type;
-  document.getElementById('blog-entry-type').value = type;
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
 
-  document.querySelectorAll('.compose-tab').forEach(tab => {
-    const active = tab.dataset.compose === type;
-    tab.classList.toggle('is-active', active);
-    tab.setAttribute('aria-selected', active ? 'true' : 'false');
-  });
+function fieldText(el) {
+  return (el?.textContent || '').trim();
+}
 
-  document.querySelectorAll('.field-post-only').forEach(el => {
-    el.hidden = type === 'journal';
-  });
+function setEditorPlaceholder(el) {
+  if (!el) return;
+  el.classList.toggle('is-empty', fieldText(el) === '');
+}
 
-  const titleInput = document.getElementById('blog-title-input');
-  const thumbInput = document.getElementById('blog-thumbnail-input');
-  if (titleInput) titleInput.required = type === 'post';
-  if (thumbInput) thumbInput.required = type === 'post' && !document.getElementById('blog-edit-id').value;
+function showFullScreenView(viewId) {
+  const feed = document.getElementById('banana-feed');
+  const main = document.getElementById('banana-main');
+  const postView = document.getElementById('post-view');
+  const journalEditor = document.getElementById('journal-editor');
+  if (feed) feed.hidden = true;
+  if (main) main.setAttribute('aria-hidden', 'true');
+  document.querySelector('.banana-bar')?.setAttribute('aria-hidden', 'true');
+  if (postView) postView.hidden = viewId !== 'post-view';
+  if (journalEditor) journalEditor.hidden = viewId !== 'journal-editor';
+  document.body.classList.add('post-open');
+}
 
-  const editId = document.getElementById('blog-edit-id').value;
-  if (!editId) {
-    const mode = document.getElementById('blog-form-mode');
-    if (mode) mode.textContent = type === 'post' ? 'New post' : 'New journal entry';
+function hideFullScreenViews() {
+  const feed = document.getElementById('banana-feed');
+  const main = document.getElementById('banana-main');
+  const postView = document.getElementById('post-view');
+  const journalEditor = document.getElementById('journal-editor');
+  if (feed) feed.hidden = false;
+  if (main) main.removeAttribute('aria-hidden');
+  document.querySelector('.banana-bar')?.removeAttribute('aria-hidden');
+  if (postView) postView.hidden = true;
+  if (journalEditor) journalEditor.hidden = true;
+  document.body.classList.remove('post-open');
+}
+
+function updatePostThumbUI() {
+  const img = document.getElementById('edit-post-thumb');
+  const btn = document.getElementById('edit-post-thumb-btn');
+  const wrap = document.getElementById('edit-post-thumb-wrap');
+  const url = postEditThumbFile ? URL.createObjectURL(postEditThumbFile) : postEditThumbUrl;
+  if (!img || !btn || !wrap) return;
+
+  if (url) {
+    img.src = url;
+    img.hidden = false;
+    wrap.classList.add('has-image');
+    btn.textContent = 'Change image';
+  } else {
+    img.hidden = true;
+    img.removeAttribute('src');
+    wrap.classList.remove('has-image');
+    btn.textContent = 'Add image';
   }
 }
 
-function clearThumbnailPreview() {
-  const preview = document.getElementById('blog-thumbnail-preview');
-  const urlInput = document.getElementById('blog-thumbnail-url');
-  const fileInput = document.getElementById('blog-thumbnail-input');
-  if (preview) {
-    preview.hidden = true;
-    preview.removeAttribute('src');
+function enterPostEditMode(item = null, { returnToRead = false } = {}) {
+  if (!isAdmin()) return;
+
+  postEditId = item?.id || null;
+  postEditThumbUrl = item?.thumbnail_url || '';
+  postEditThumbFile = null;
+  postEditReturnToRead = returnToRead;
+
+  const dateEl = document.getElementById('edit-post-date');
+  const titleEl = document.getElementById('edit-post-title');
+  const bodyEl = document.getElementById('edit-post-body');
+  const saveBtn = document.getElementById('post-chrome-save');
+  const leftBtn = document.getElementById('post-chrome-left');
+  const spacer = document.getElementById('post-chrome-spacer');
+  if (!dateEl || !titleEl || !bodyEl) return;
+
+  dateEl.value = item?.post_date || todayISO();
+  titleEl.textContent = item?.title || '';
+  bodyEl.textContent = item?.body || '';
+  setEditorPlaceholder(titleEl);
+  setEditorPlaceholder(bodyEl);
+  updatePostThumbUI();
+
+  document.getElementById('post-read').hidden = true;
+  document.getElementById('post-edit').hidden = false;
+  document.getElementById('post-view')?.classList.add('post-view--editing');
+
+  if (saveBtn) {
+    saveBtn.hidden = false;
+    saveBtn.textContent = postEditId ? 'Save' : 'Publish';
   }
-  if (urlInput) urlInput.value = '';
-  if (fileInput) fileInput.value = '';
+  if (leftBtn) leftBtn.textContent = '← Cancel';
+  if (spacer) spacer.hidden = true;
+
+  if (!returnToRead) {
+    showFullScreenView('post-view');
+    document.getElementById('post-view')?.querySelector('.post-view-scroll')?.scrollTo(0, 0);
+  }
+
+  titleEl.focus();
 }
 
-function showThumbnailPreview(url) {
-  const preview = document.getElementById('blog-thumbnail-preview');
-  const urlInput = document.getElementById('blog-thumbnail-url');
-  if (!preview || !url) return;
-  preview.src = url;
-  preview.hidden = false;
-  if (urlInput) urlInput.value = url;
+function exitPostEditMode({ toRead = false, toFeed = false, readId = null } = {}) {
+  document.getElementById('post-edit').hidden = true;
+  document.getElementById('post-read').hidden = false;
+  document.getElementById('post-view')?.classList.remove('post-view--editing');
+  document.getElementById('post-chrome-save').hidden = true;
+  document.getElementById('post-chrome-spacer').hidden = false;
+  document.getElementById('post-chrome-left').textContent = '← All posts';
+  document.getElementById('edit-post-thumb-file').value = '';
+
+  postEditId = null;
+  postEditThumbUrl = '';
+  postEditThumbFile = null;
+  postEditReturnToRead = false;
+
+  if (toRead && readId) {
+    openPostView(readId, { pushHash: false });
+    return;
+  }
+  if (toFeed) {
+    closePostView({ replaceHash: true });
+  }
 }
 
-function openComposeModal(type = 'post') {
-  const modal = document.getElementById('compose-modal');
-  if (!modal) return;
-  clearEditForm({ keepOpen: true });
-  setComposeType(type);
-  modal.hidden = false;
-  document.getElementById('blog-title-input')?.focus();
+function cancelPostEdit() {
+  const readId = postEditReturnToRead ? postEditId : null;
+  exitPostEditMode({ toRead: Boolean(readId), toFeed: !readId, readId });
 }
 
-function closeComposeModal() {
-  const modal = document.getElementById('compose-modal');
-  if (modal) modal.hidden = true;
+function openJournalEditor(item = null) {
+  if (!isAdmin()) return;
+
+  journalEditId = item?.id || null;
+  const dateEl = document.getElementById('edit-journal-date');
+  const bodyEl = document.getElementById('edit-journal-body');
+  const saveBtn = document.getElementById('journal-chrome-save');
+  if (!dateEl || !bodyEl) return;
+
+  dateEl.value = item?.post_date || todayISO();
+  bodyEl.textContent = item?.body || '';
+  setEditorPlaceholder(bodyEl);
+  if (saveBtn) saveBtn.textContent = journalEditId ? 'Save' : 'Save';
+
+  showFullScreenView('journal-editor');
+  document.getElementById('journal-editor')?.querySelector('.post-view-scroll')?.scrollTo(0, 0);
+  bodyEl.focus();
 }
 
-function clearEditForm({ keepOpen = false } = {}) {
-  const form = document.getElementById('blog-form');
-  const editId = document.getElementById('blog-edit-id');
-  const mode = document.getElementById('blog-form-mode');
-  const submitBtn = document.getElementById('blog-submit-btn');
-  if (!form || !editId) return;
-
-  form.reset();
-  editId.value = '';
-  clearThumbnailPreview();
-  setComposeType('post');
-
-  if (mode) mode.textContent = 'New post';
-  if (submitBtn) submitBtn.textContent = 'Publish';
-
-  const dateInput = document.getElementById('blog-date-input');
-  if (dateInput) dateInput.value = new Date().toISOString().slice(0, 10);
-
-  if (!keepOpen) closeComposeModal();
+function closeJournalEditor() {
+  journalEditId = null;
+  hideFullScreenViews();
 }
 
 function startEdit(item) {
-  const editId = document.getElementById('blog-edit-id');
-  const mode = document.getElementById('blog-form-mode');
-  const submitBtn = document.getElementById('blog-submit-btn');
-  if (!editId) return;
+  if ((item.entry_type || 'post') === 'journal') {
+    openJournalEditor(item);
+    return;
+  }
+  const onPostScreen = !document.getElementById('post-view')?.hidden && getPostFromHash() === item.id;
+  if (onPostScreen) {
+    enterPostEditMode(item, { returnToRead: true });
+    return;
+  }
+  enterPostEditMode(item);
+}
 
-  const type = item.entry_type || 'post';
-  openComposeModal(type);
+async function savePostEditor() {
+  if (!isAdmin()) return;
 
-  editId.value = item.id;
-  document.getElementById('blog-date-input').value = item.post_date;
-  document.getElementById('blog-title-input').value = item.title || '';
-  document.getElementById('blog-body-input').value = item.body;
+  const title = fieldText(document.getElementById('edit-post-title'));
+  const body = fieldText(document.getElementById('edit-post-body'));
+  const post_date = document.getElementById('edit-post-date')?.value;
+  const saveBtn = document.getElementById('post-chrome-save');
 
-  if (item.thumbnail_url) showThumbnailPreview(item.thumbnail_url);
-  else clearThumbnailPreview();
+  if (!body || !post_date) return;
+  if (!title) {
+    alert('Posts need a title.');
+    return;
+  }
+  if (!postEditId && !postEditThumbFile && !postEditThumbUrl) {
+    alert('Posts need an image.');
+    return;
+  }
 
-  const thumbInput = document.getElementById('blog-thumbnail-input');
-  if (thumbInput) thumbInput.required = false;
+  if (saveBtn) saveBtn.disabled = true;
+  try {
+    let thumbnail_url = postEditThumbUrl;
+    if (postEditThumbFile) {
+      thumbnail_url = await uploadThumbnail(postEditThumbFile);
+    }
 
-  if (mode) mode.textContent = type === 'post' ? 'Editing post' : 'Editing journal entry';
-  if (submitBtn) submitBtn.textContent = 'Save changes';
+    const payload = {
+      entry_type: 'post',
+      title,
+      body,
+      post_date,
+      thumbnail_url: thumbnail_url || null,
+    };
+
+    let saved;
+    if (postEditId) {
+      saved = await updatePost(postEditId, payload);
+    } else {
+      saved = await savePost(payload);
+    }
+
+    const returnToRead = postEditReturnToRead;
+    const savedId = saved?.id || postEditId;
+    await loadAll();
+
+    if (returnToRead && savedId) {
+      exitPostEditMode({ toRead: true, readId: savedId });
+    } else if (savedId) {
+      exitPostEditMode({ toFeed: true });
+      openPostView(savedId);
+    } else {
+      exitPostEditMode({ toFeed: true });
+    }
+  } catch (err) {
+    alert(postEditId ? 'Could not save.' : 'Could not publish.');
+    console.error(err);
+  } finally {
+    if (saveBtn) saveBtn.disabled = false;
+  }
+}
+
+async function saveJournalEditor() {
+  if (!isAdmin()) return;
+
+  const body = fieldText(document.getElementById('edit-journal-body'));
+  const post_date = document.getElementById('edit-journal-date')?.value;
+  const saveBtn = document.getElementById('journal-chrome-save');
+
+  if (!body || !post_date) return;
+
+  if (saveBtn) saveBtn.disabled = true;
+  try {
+    const payload = {
+      entry_type: 'journal',
+      title: null,
+      body,
+      post_date,
+      thumbnail_url: null,
+    };
+
+    if (journalEditId) {
+      await updatePost(journalEditId, payload);
+    } else {
+      await savePost(payload);
+    }
+
+    closeJournalEditor();
+    await loadAll();
+  } catch (err) {
+    alert(journalEditId ? 'Could not save.' : 'Could not save entry.');
+    console.error(err);
+  } finally {
+    if (saveBtn) saveBtn.disabled = false;
+  }
 }
 
 function applyPostMosaicLayout() {
@@ -331,6 +490,106 @@ function applyPostMosaicLayout() {
   });
 }
 
+function getPostFromHash() {
+  const match = window.location.hash.match(/^#post\/(.+)$/);
+  return match ? match[1] : null;
+}
+
+function openPostView(id, { pushHash = true } = {}) {
+  const item = postsCache.find(p => p.id === id && (p.entry_type || 'post') === 'post');
+  if (!item) return;
+
+  const view = document.getElementById('post-view');
+  const scrollEl = view?.querySelector('.post-view-scroll');
+  const dateEl = document.getElementById('post-view-date');
+  const titleEl = document.getElementById('post-view-title');
+  const contentEl = document.getElementById('post-view-content');
+  const actionsEl = document.getElementById('post-view-actions');
+  if (!view || !dateEl || !titleEl || !contentEl) return;
+
+  document.getElementById('post-read').hidden = false;
+  document.getElementById('post-edit').hidden = true;
+  view.classList.remove('post-view--editing');
+  document.getElementById('post-chrome-save').hidden = true;
+  document.getElementById('post-chrome-spacer').hidden = false;
+  document.getElementById('post-chrome-left').textContent = '← All posts';
+
+  dateEl.dateTime = item.post_date;
+  dateEl.textContent = formatDate(item.post_date);
+  titleEl.textContent = item.title || 'Untitled';
+
+  const imageHtml = item.thumbnail_url
+    ? `<img class="post-view-img" src="${escapeHtml(item.thumbnail_url)}" alt="" />`
+    : '';
+
+  contentEl.innerHTML = `${imageHtml}<div class="post-view-body">${escapeHtml(item.body)}</div>`;
+
+  if (actionsEl) {
+    actionsEl.innerHTML = `
+      <button type="button" class="blog-edit" data-id="${item.id}">Edit</button>
+      <button type="button" class="blog-delete" data-id="${item.id}">Delete</button>`;
+    actionsEl.querySelector('.blog-edit')?.addEventListener('click', e => {
+      e.stopPropagation();
+      if (!isAdmin()) return;
+      enterPostEditMode(item, { returnToRead: true });
+    });
+    actionsEl.querySelector('.blog-delete')?.addEventListener('click', async e => {
+      e.stopPropagation();
+      if (!isAdmin()) return;
+      if (!confirm('Delete this post?')) return;
+      closePostView({ replaceHash: true });
+      await removePost(item.id);
+      await loadAll();
+    });
+  }
+
+  showFullScreenView('post-view');
+  document.title = `${item.title || 'Untitled'} — The Banana`;
+  if (scrollEl) scrollEl.scrollTop = 0;
+
+  if (pushHash) {
+    const nextHash = `#post/${id}`;
+    if (window.location.hash !== nextHash) {
+      history.pushState({ postId: id }, '', nextHash);
+    }
+  }
+}
+
+function closePostView({ replaceHash = false, useHistory = false } = {}) {
+  const view = document.getElementById('post-view');
+  if (!view) return;
+
+  if (view.classList.contains('post-view--editing')) {
+    cancelPostEdit();
+    return;
+  }
+
+  if (useHistory && window.location.hash.startsWith('#post/')) {
+    history.back();
+    return;
+  }
+
+  hideFullScreenViews();
+  document.title = 'The Banana';
+
+  const base = `${window.location.pathname}${window.location.search}`;
+  if (replaceHash || window.location.hash.startsWith('#post/')) {
+    history.replaceState(null, '', base);
+  }
+}
+
+function syncPostViewFromHash() {
+  if (document.getElementById('post-view')?.classList.contains('post-view--editing')) return;
+  if (!document.getElementById('journal-editor')?.hidden) return;
+
+  const id = getPostFromHash();
+  if (id && postsCache.some(p => p.id === id)) {
+    openPostView(id, { pushHash: false });
+  } else if (!document.getElementById('post-view')?.hidden) {
+    closePostView({ replaceHash: true });
+  }
+}
+
 function renderPosts(posts) {
   const postsList = document.getElementById('posts-list');
   const journalList = document.getElementById('journal-list');
@@ -348,7 +607,7 @@ function renderPosts(posts) {
   postsList.innerHTML = articles
     .map(
       item => `
-    <article class="post-card" data-id="${item.id}">
+    <article class="post-card post-card--preview" data-id="${item.id}" tabindex="0" role="link">
       <div class="post-card-thumb">
         ${
           item.thumbnail_url
@@ -359,7 +618,6 @@ function renderPosts(posts) {
       <div class="post-card-body">
         <time datetime="${item.post_date}">${formatDate(item.post_date)}</time>
         <h3>${escapeHtml(item.title || 'Untitled')}</h3>
-        <p>${escapeHtml(item.body)}</p>
         <div class="blog-post-actions">
           <button type="button" class="blog-edit" data-id="${item.id}">Edit</button>
           <button type="button" class="blog-delete" data-id="${item.id}">Delete</button>
@@ -384,7 +642,8 @@ function renderPosts(posts) {
     .join('');
 
   document.querySelectorAll('.blog-edit').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
       if (!isAdmin()) return;
       const item = postsCache.find(p => p.id === btn.dataset.id);
       if (item) startEdit(item);
@@ -392,17 +651,34 @@ function renderPosts(posts) {
   });
 
   document.querySelectorAll('.blog-delete').forEach(btn => {
-    btn.addEventListener('click', async () => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
       if (!isAdmin()) return;
       if (!confirm('Delete this item?')) return;
-      const editingId = document.getElementById('blog-edit-id')?.value;
-      if (editingId === btn.dataset.id) clearEditForm();
+      if (postEditId === btn.dataset.id) cancelPostEdit();
+      if (journalEditId === btn.dataset.id) closeJournalEditor();
+      if (getPostFromHash() === btn.dataset.id) closePostView({ replaceHash: true });
       await removePost(btn.dataset.id);
       await loadAll();
     });
   });
 
+  postsList.querySelectorAll('.post-card--preview').forEach(card => {
+    const open = () => openPostView(card.dataset.id);
+    card.addEventListener('click', e => {
+      if (e.target.closest('.blog-post-actions')) return;
+      open();
+    });
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open();
+      }
+    });
+  });
+
   applyPostMosaicLayout();
+  syncPostViewFromHash();
 }
 
 async function loadAll() {
@@ -492,84 +768,51 @@ function initAdminGate() {
 
 function initBlogPage() {
   document.getElementById('blog-logout')?.addEventListener('click', logout);
-  document.getElementById('blog-cancel-edit')?.addEventListener('click', () => clearEditForm());
-  document.getElementById('compose-modal-close')?.addEventListener('click', () => clearEditForm());
-  document.getElementById('blog-new-post')?.addEventListener('click', () => openComposeModal('post'));
-  document.getElementById('blog-new-journal')?.addEventListener('click', () => openComposeModal('journal'));
+  document.getElementById('blog-new-post')?.addEventListener('click', () => enterPostEditMode());
+  document.getElementById('blog-new-journal')?.addEventListener('click', () => openJournalEditor());
+  document.getElementById('post-chrome-left')?.addEventListener('click', () => {
+    const editing = document.getElementById('post-view')?.classList.contains('post-view--editing');
+    if (editing) cancelPostEdit();
+    else closePostView({ useHistory: true });
+  });
+  document.getElementById('post-chrome-save')?.addEventListener('click', savePostEditor);
+  document.getElementById('journal-chrome-cancel')?.addEventListener('click', closeJournalEditor);
+  document.getElementById('journal-chrome-save')?.addEventListener('click', saveJournalEditor);
 
-  document.getElementById('compose-modal')?.addEventListener('click', e => {
-    if (e.target.id === 'compose-modal') clearEditForm();
+  document.getElementById('edit-post-thumb-btn')?.addEventListener('click', () => {
+    document.getElementById('edit-post-thumb-file')?.click();
+  });
+  document.getElementById('edit-post-thumb')?.addEventListener('click', () => {
+    document.getElementById('edit-post-thumb-file')?.click();
+  });
+  document.getElementById('edit-post-thumb-file')?.addEventListener('change', e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    postEditThumbFile = file;
+    updatePostThumbUI();
   });
 
-  document.querySelectorAll('.compose-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      if (document.getElementById('blog-edit-id').value) return;
-      setComposeType(tab.dataset.compose);
+  ['edit-post-title', 'edit-post-body', 'edit-journal-body'].forEach(id => {
+    const el = document.getElementById(id);
+    el?.addEventListener('input', () => setEditorPlaceholder(el));
+    el?.addEventListener('focus', () => setEditorPlaceholder(el));
+    el?.addEventListener('blur', () => setEditorPlaceholder(el));
+    el?.addEventListener('paste', e => {
+      e.preventDefault();
+      const text = e.clipboardData?.getData('text/plain') || '';
+      document.execCommand('insertText', false, text);
     });
   });
 
-  document.getElementById('blog-thumbnail-input')?.addEventListener('change', e => {
-    const file = e.target.files?.[0];
-    if (file) showThumbnailPreview(URL.createObjectURL(file));
-  });
-
-  document.getElementById('blog-form')?.addEventListener('submit', async e => {
-    e.preventDefault();
-    if (!isAdmin()) return;
-
-    const entry_type = document.getElementById('blog-entry-type').value;
-    const title = document.getElementById('blog-title-input').value.trim();
-    const body = document.getElementById('blog-body-input').value.trim();
-    const post_date = document.getElementById('blog-date-input').value;
-    const editId = document.getElementById('blog-edit-id').value;
-    const thumbFile = document.getElementById('blog-thumbnail-input').files?.[0];
-    let thumbnail_url = document.getElementById('blog-thumbnail-url').value;
-
-    if (!body || !post_date) return;
-
-    if (entry_type === 'post') {
-      if (!title) {
-        alert('Posts need a title.');
-        return;
-      }
-      if (!editId && !thumbFile && !thumbnail_url) {
-        alert('Posts need a thumbnail image.');
-        return;
-      }
+  window.addEventListener('popstate', () => {
+    if (document.getElementById('post-view')?.classList.contains('post-view--editing')) {
+      cancelPostEdit();
     }
-
-    const btn = document.getElementById('blog-submit-btn');
-    btn.disabled = true;
-
-    try {
-      if (thumbFile) {
-        thumbnail_url = await uploadThumbnail(thumbFile);
-      }
-
-      const payload = {
-        entry_type,
-        title: entry_type === 'post' ? title : null,
-        body,
-        post_date,
-        thumbnail_url: entry_type === 'post' ? thumbnail_url || null : null,
-      };
-
-      if (editId) {
-        await updatePost(editId, payload);
-      } else {
-        await savePost(payload);
-      }
-
-      clearEditForm();
-      await loadAll();
-    } catch (err) {
-      alert(editId ? 'Could not update.' : 'Could not publish.');
-      console.error(err);
-    } finally {
-      btn.disabled = false;
+    if (!document.getElementById('journal-editor')?.hidden) {
+      closeJournalEditor();
     }
+    syncPostViewFromHash();
   });
-
 }
 
 async function restoreSession() {
