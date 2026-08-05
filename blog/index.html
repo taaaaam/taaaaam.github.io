@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>The Banana</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.ico" sizes="16x16 32x32" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body data-page="blog" class="banana-site">
+    <header class="banana-bar">
+      <a href="/" class="banana-bar-home">← Home</a>
+      <h1 class="banana-masthead">The Banana</h1>
+      <div class="banana-bar-actions">
+        <button
+          type="button"
+          id="blog-new-post"
+          class="banana-bar-btn is-admin-only"
+          hidden
+        >
+          New post
+        </button>
+        <button
+          type="button"
+          id="blog-new-journal"
+          class="banana-bar-btn is-admin-only"
+          hidden
+        >
+          New entry
+        </button>
+        <button
+          type="button"
+          id="blog-logout"
+          class="banana-bar-btn is-admin-only"
+          hidden
+        >
+          Log out
+        </button>
+      </div>
+    </header>
+
+    <main class="banana-main" id="banana-main">
+      <p id="blog-status" class="blog-status is-admin-only" hidden></p>
+
+      <div id="banana-feed" class="banana-layout">
+        <section class="banana-section banana-posts" aria-labelledby="posts-heading">
+          <h2 id="posts-heading" class="banana-section-title">Posts</h2>
+          <p id="posts-empty" class="blog-empty" hidden>No posts yet.</p>
+          <div id="posts-list" class="posts-mosaic"></div>
+        </section>
+
+        <aside class="banana-section banana-journal" aria-labelledby="journal-heading">
+          <h2 id="journal-heading" class="banana-section-title">Journal</h2>
+          <p id="journal-empty" class="blog-empty" hidden>No entries yet.</p>
+          <div id="journal-list" class="journal-list"></div>
+        </aside>
+      </div>
+    </main>
+
+    <article id="post-view" class="post-view" hidden aria-live="polite">
+      <header class="post-view-chrome">
+        <button type="button" id="post-chrome-left" class="post-view-back">
+          ← All posts
+        </button>
+        <p class="post-view-masthead">The Banana</p>
+        <div class="post-view-chrome-right">
+          <button type="button" id="post-chrome-save" class="editor-save" hidden>
+            Publish
+          </button>
+          <span class="post-view-chrome-spacer" id="post-chrome-spacer" aria-hidden="true"></span>
+        </div>
+      </header>
+      <div class="post-view-scroll">
+        <div class="post-view-inner">
+          <div id="post-read">
+            <header class="post-view-header">
+              <time id="post-view-date" class="post-view-date"></time>
+              <h2 id="post-view-title" class="post-view-title"></h2>
+            </header>
+            <div id="post-view-content" class="post-view-content"></div>
+            <div id="post-view-actions" class="blog-post-actions is-admin-only" hidden></div>
+          </div>
+
+          <div id="post-edit" hidden>
+            <header class="post-view-header">
+              <input type="date" id="edit-post-date" class="editor-date" />
+              <div
+                id="edit-post-title"
+                class="post-view-title editor-field"
+                contenteditable="true"
+                data-placeholder="Title"
+                spellcheck="true"
+              ></div>
+            </header>
+            <div class="post-view-content editor-content">
+              <input type="file" id="edit-post-thumb-file" accept="image/*" hidden />
+              <figure id="edit-post-thumb-wrap" class="editor-thumb-wrap">
+                <img id="edit-post-thumb" class="post-view-img" alt="" hidden />
+                <button type="button" id="edit-post-thumb-btn" class="editor-thumb-btn">
+                  Add image
+                </button>
+              </figure>
+              <div
+                id="edit-post-body"
+                class="post-view-body editor-field"
+                contenteditable="true"
+                data-placeholder="Start writing…"
+                spellcheck="true"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article id="journal-view" class="post-view journal-view" hidden aria-live="polite">
+      <header class="post-view-chrome">
+        <button type="button" id="journal-view-back" class="post-view-back">
+          ← Journal
+        </button>
+        <p class="post-view-masthead">The Banana</p>
+        <span class="post-view-chrome-spacer" aria-hidden="true"></span>
+      </header>
+      <div class="post-view-scroll">
+        <div class="post-view-inner journal-view-inner">
+          <time id="journal-view-date" class="journal-view-date"></time>
+          <div id="journal-view-body" class="journal-view-body"></div>
+          <div id="journal-view-actions" class="blog-post-actions is-admin-only" hidden></div>
+        </div>
+      </div>
+    </article>
+
+    <article id="journal-editor" class="post-view journal-editor" hidden aria-live="polite">
+      <header class="post-view-chrome">
+        <button type="button" id="journal-chrome-cancel" class="post-view-back">
+          ← Cancel
+        </button>
+        <p class="post-view-masthead">The Banana</p>
+        <div class="post-view-chrome-right">
+          <button type="button" id="journal-chrome-save" class="editor-save">
+            Save
+          </button>
+        </div>
+      </header>
+      <div class="post-view-scroll">
+        <div class="post-view-inner journal-editor-inner">
+          <input type="date" id="edit-journal-date" class="editor-date journal-editor-date" />
+          <div
+            id="edit-journal-body"
+            class="journal-body editor-field journal-editor-body"
+            contenteditable="true"
+            data-placeholder="Write your entry…"
+            spellcheck="true"
+          ></div>
+        </div>
+      </div>
+    </article>
+
+    <div id="admin-modal" class="admin-modal" hidden>
+      <div
+        class="admin-modal-card"
+        role="dialog"
+        aria-labelledby="admin-modal-title"
+      >
+        <h2 id="admin-modal-title">Admin</h2>
+        <form id="admin-form">
+          <label for="admin-password">Password</label>
+          <input
+            type="password"
+            id="admin-password"
+            autocomplete="current-password"
+            required
+          />
+          <p id="admin-error" class="admin-error" aria-live="polite"></p>
+          <div class="admin-modal-actions">
+            <button type="button" id="admin-cancel" class="btn">Cancel</button>
+            <button type="submit" class="btn btn-solid">Enter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/blog-config.js"></script>
+    <script src="/blog.js"></script>
+  </body>
+</html>

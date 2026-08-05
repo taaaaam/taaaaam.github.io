@@ -4,7 +4,7 @@ const ADMIN_HASH = '323f53abf99d49ca91320286d713abc6bcf1c16eff28e3774946b6452da0
 const ADMIN_SESSION_KEY = 'tamvu_admin';
 const LOCAL_POSTS_KEY = 'tamvu_blog_posts';
 const CLICK_WINDOW_MS = 900;
-const BLOG_PATH = '/blog.html';
+const BLOG_PATH = '/blog';
 const THUMBNAIL_BUCKET = 'blog-thumbnails';
 
 let supabaseClient = null;
