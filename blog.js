@@ -16,6 +16,7 @@ let postEditThumbUrl = '';
 let postEditThumbFile = null;
 let postEditReturnToRead = false;
 let journalEditId = null;
+let journalEditReturnToRead = false;
 
 function isBlogPage() {
   return document.body.dataset.page === 'blog';
@@ -291,11 +292,13 @@ function showFullScreenView(viewId) {
   const feed = document.getElementById('banana-feed');
   const main = document.getElementById('banana-main');
   const postView = document.getElementById('post-view');
+  const journalView = document.getElementById('journal-view');
   const journalEditor = document.getElementById('journal-editor');
   if (feed) feed.hidden = true;
   if (main) main.setAttribute('aria-hidden', 'true');
   document.querySelector('.banana-bar')?.setAttribute('aria-hidden', 'true');
   if (postView) postView.hidden = viewId !== 'post-view';
+  if (journalView) journalView.hidden = viewId !== 'journal-view';
   if (journalEditor) journalEditor.hidden = viewId !== 'journal-editor';
   document.body.classList.add('post-open');
 }
@@ -304,11 +307,13 @@ function hideFullScreenViews() {
   const feed = document.getElementById('banana-feed');
   const main = document.getElementById('banana-main');
   const postView = document.getElementById('post-view');
+  const journalView = document.getElementById('journal-view');
   const journalEditor = document.getElementById('journal-editor');
   if (feed) feed.hidden = false;
   if (main) main.removeAttribute('aria-hidden');
   document.querySelector('.banana-bar')?.removeAttribute('aria-hidden');
   if (postView) postView.hidden = true;
+  if (journalView) journalView.hidden = true;
   if (journalEditor) journalEditor.hidden = true;
   document.body.classList.remove('post-open');
 }
@@ -403,33 +408,52 @@ function cancelPostEdit() {
   exitPostEditMode({ toRead: Boolean(readId), toFeed: !readId, readId });
 }
 
-function openJournalEditor(item = null) {
+function openJournalEditor(item = null, { returnToRead = false } = {}) {
   if (!isAdmin()) return;
 
   journalEditId = item?.id || null;
+  journalEditReturnToRead = returnToRead;
   const dateEl = document.getElementById('edit-journal-date');
   const bodyEl = document.getElementById('edit-journal-body');
   const saveBtn = document.getElementById('journal-chrome-save');
+  const cancelBtn = document.getElementById('journal-chrome-cancel');
   if (!dateEl || !bodyEl) return;
 
   dateEl.value = item?.post_date || todayISO();
   bodyEl.textContent = item?.body || '';
   setEditorPlaceholder(bodyEl);
   if (saveBtn) saveBtn.textContent = journalEditId ? 'Save' : 'Save';
+  if (cancelBtn) cancelBtn.textContent = returnToRead ? '← Cancel' : '← Cancel';
 
   showFullScreenView('journal-editor');
   document.getElementById('journal-editor')?.querySelector('.post-view-scroll')?.scrollTo(0, 0);
   bodyEl.focus();
 }
 
-function closeJournalEditor() {
+function closeJournalEditor({ toRead = false, readId = null, toFeed = false } = {}) {
+  const returnId = toRead ? readId || journalEditId : null;
   journalEditId = null;
-  hideFullScreenViews();
+  journalEditReturnToRead = false;
+
+  if (returnId) {
+    openJournalView(returnId, { pushHash: false });
+    return;
+  }
+  if (toFeed || !returnId) {
+    hideFullScreenViews();
+    document.title = 'The Banana';
+    const base = `${window.location.pathname}${window.location.search}`;
+    if (window.location.hash.startsWith('#journal/')) {
+      history.replaceState(null, '', base);
+    }
+  }
 }
 
 function startEdit(item) {
   if ((item.entry_type || 'post') === 'journal') {
-    openJournalEditor(item);
+    const onJournalScreen =
+      !document.getElementById('journal-view')?.hidden && getJournalFromHash() === item.id;
+    openJournalEditor(item, { returnToRead: onJournalScreen });
     return;
   }
   const onPostScreen = !document.getElementById('post-view')?.hidden && getPostFromHash() === item.id;
@@ -519,14 +543,22 @@ async function saveJournalEditor() {
       thumbnail_url: null,
     };
 
+    let saved;
     if (journalEditId) {
-      await updatePost(journalEditId, payload);
+      saved = await updatePost(journalEditId, payload);
     } else {
-      await savePost(payload);
+      saved = await savePost(payload);
     }
 
-    closeJournalEditor();
+    const returnToRead = journalEditReturnToRead;
+    const savedId = saved?.id || journalEditId;
     await loadAll();
+
+    if (returnToRead && savedId) {
+      closeJournalEditor({ toRead: true, readId: savedId });
+    } else {
+      closeJournalEditor({ toFeed: true });
+    }
   } catch (err) {
     alert(journalEditId ? 'Could not save.' : 'Could not save entry.');
     console.error(err);
@@ -555,6 +587,80 @@ function applyPostMosaicLayout() {
 function getPostFromHash() {
   const match = window.location.hash.match(/^#post\/(.+)$/);
   return match ? match[1] : null;
+}
+
+function getJournalFromHash() {
+  const match = window.location.hash.match(/^#journal\/(.+)$/);
+  return match ? match[1] : null;
+}
+
+function openJournalView(id, { pushHash = true } = {}) {
+  const item = postsCache.find(p => p.id === id && p.entry_type === 'journal');
+  if (!item) return;
+
+  const view = document.getElementById('journal-view');
+  const scrollEl = view?.querySelector('.post-view-scroll');
+  const dateEl = document.getElementById('journal-view-date');
+  const bodyEl = document.getElementById('journal-view-body');
+  const actionsEl = document.getElementById('journal-view-actions');
+  if (!view || !dateEl || !bodyEl) return;
+
+  dateEl.dateTime = item.post_date;
+  dateEl.textContent = formatDate(item.post_date);
+  bodyEl.textContent = item.body;
+
+  if (actionsEl) {
+    actionsEl.innerHTML = `
+      <button type="button" class="blog-edit" data-id="${item.id}">Edit</button>
+      <button type="button" class="blog-delete" data-id="${item.id}">Delete</button>`;
+    actionsEl.querySelector('.blog-edit')?.addEventListener('click', e => {
+      e.stopPropagation();
+      if (!isAdmin()) return;
+      openJournalEditor(item, { returnToRead: true });
+    });
+    actionsEl.querySelector('.blog-delete')?.addEventListener('click', async e => {
+      e.stopPropagation();
+      if (!isAdmin()) return;
+      if (!confirm('Delete this entry?')) return;
+      closeJournalView({ replaceHash: true });
+      await removePost(item.id);
+      await loadAll();
+    });
+  }
+
+  showFullScreenView('journal-view');
+  document.title = `${formatDate(item.post_date)} — The Banana`;
+  if (scrollEl) scrollEl.scrollTop = 0;
+
+  if (pushHash) {
+    const nextHash = `#journal/${id}`;
+    if (window.location.hash !== nextHash) {
+      history.pushState({ journalId: id }, '', nextHash);
+    }
+  }
+}
+
+function closeJournalView({ replaceHash = false, useHistory = false } = {}) {
+  const view = document.getElementById('journal-view');
+  if (!view) return;
+
+  if (!document.getElementById('journal-editor')?.hidden) {
+    closeJournalEditor({ toRead: journalEditReturnToRead, readId: journalEditId, toFeed: true });
+    return;
+  }
+
+  if (useHistory && window.location.hash.startsWith('#journal/')) {
+    history.back();
+    return;
+  }
+
+  hideFullScreenViews();
+  document.title = 'The Banana';
+
+  const base = `${window.location.pathname}${window.location.search}`;
+  if (replaceHash || window.location.hash.startsWith('#journal/')) {
+    history.replaceState(null, '', base);
+  }
 }
 
 function openPostView(id, { pushHash = true } = {}) {
@@ -640,15 +746,26 @@ function closePostView({ replaceHash = false, useHistory = false } = {}) {
   }
 }
 
-function syncPostViewFromHash() {
+function syncViewsFromHash() {
   if (document.getElementById('post-view')?.classList.contains('post-view--editing')) return;
   if (!document.getElementById('journal-editor')?.hidden) return;
 
-  const id = getPostFromHash();
-  if (id && postsCache.some(p => p.id === id)) {
-    openPostView(id, { pushHash: false });
-  } else if (!document.getElementById('post-view')?.hidden) {
+  const journalId = getJournalFromHash();
+  if (journalId && postsCache.some(p => p.id === journalId)) {
+    openJournalView(journalId, { pushHash: false });
+    return;
+  }
+
+  const postId = getPostFromHash();
+  if (postId && postsCache.some(p => p.id === postId)) {
+    openPostView(postId, { pushHash: false });
+    return;
+  }
+
+  if (!document.getElementById('post-view')?.hidden) {
     closePostView({ replaceHash: true });
+  } else if (!document.getElementById('journal-view')?.hidden) {
+    closeJournalView({ replaceHash: true });
   }
 }
 
@@ -692,14 +809,9 @@ function renderPosts(posts) {
   journalList.innerHTML = journals
     .map(
       item => `
-    <article class="journal-entry" data-id="${item.id}">
-      <time class="journal-date" datetime="${item.post_date}">${formatDate(item.post_date)}</time>
-      <div class="journal-body">${escapeHtml(item.body)}</div>
-      <div class="blog-post-actions">
-        <button type="button" class="blog-edit" data-id="${item.id}">Edit</button>
-        <button type="button" class="blog-delete" data-id="${item.id}">Delete</button>
-      </div>
-    </article>`
+    <button type="button" class="journal-date-link" data-id="${item.id}">
+      <time datetime="${item.post_date}">${formatDate(item.post_date)}</time>
+    </button>`
     )
     .join('');
 
@@ -718,11 +830,16 @@ function renderPosts(posts) {
       if (!isAdmin()) return;
       if (!confirm('Delete this item?')) return;
       if (postEditId === btn.dataset.id) cancelPostEdit();
-      if (journalEditId === btn.dataset.id) closeJournalEditor();
+      if (journalEditId === btn.dataset.id) closeJournalEditor({ toFeed: true });
       if (getPostFromHash() === btn.dataset.id) closePostView({ replaceHash: true });
+      if (getJournalFromHash() === btn.dataset.id) closeJournalView({ replaceHash: true });
       await removePost(btn.dataset.id);
       await loadAll();
     });
+  });
+
+  journalList.querySelectorAll('.journal-date-link').forEach(link => {
+    link.addEventListener('click', () => openJournalView(link.dataset.id));
   });
 
   postsList.querySelectorAll('.post-card--preview').forEach(card => {
@@ -740,7 +857,7 @@ function renderPosts(posts) {
   });
 
   applyPostMosaicLayout();
-  syncPostViewFromHash();
+  syncViewsFromHash();
 }
 
 async function loadAll() {
@@ -838,8 +955,17 @@ function initBlogPage() {
     else closePostView({ useHistory: true });
   });
   document.getElementById('post-chrome-save')?.addEventListener('click', savePostEditor);
-  document.getElementById('journal-chrome-cancel')?.addEventListener('click', closeJournalEditor);
+  document.getElementById('journal-chrome-cancel')?.addEventListener('click', () => {
+    if (journalEditReturnToRead && journalEditId) {
+      closeJournalEditor({ toRead: true, readId: journalEditId });
+    } else {
+      closeJournalEditor({ toFeed: true });
+    }
+  });
   document.getElementById('journal-chrome-save')?.addEventListener('click', saveJournalEditor);
+  document.getElementById('journal-view-back')?.addEventListener('click', () => {
+    closeJournalView({ useHistory: true });
+  });
 
   document.getElementById('edit-post-thumb-btn')?.addEventListener('click', () => {
     document.getElementById('edit-post-thumb-file')?.click();
@@ -871,9 +997,13 @@ function initBlogPage() {
       cancelPostEdit();
     }
     if (!document.getElementById('journal-editor')?.hidden) {
-      closeJournalEditor();
+      if (journalEditReturnToRead && journalEditId) {
+        closeJournalEditor({ toRead: true, readId: journalEditId });
+      } else {
+        closeJournalEditor({ toFeed: true });
+      }
     }
-    syncPostViewFromHash();
+    syncViewsFromHash();
   });
 }
 

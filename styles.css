@@ -2293,6 +2293,64 @@ body.banana-site.post-open {
   gap: 0;
 }
 
+.journal-date-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  padding: 0.65rem 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.journal-date-link:first-child {
+  padding-top: 0;
+}
+
+.journal-date-link time {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--black);
+}
+
+.journal-date-link:hover time {
+  color: var(--dim);
+}
+
+.journal-date-link:focus-visible {
+  outline: 3px solid var(--black);
+  outline-offset: 2px;
+}
+
+.journal-view-date {
+  display: block;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--black);
+}
+
+.journal-view-body {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  color: rgba(13, 13, 13, 0.9);
+}
+
+#journal-view-actions {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
 .journal-entry {
   padding: 1rem 0;
   border-bottom: 1px solid var(--line);
