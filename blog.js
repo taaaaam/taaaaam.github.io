@@ -280,7 +280,22 @@ function todayISO() {
 }
 
 function fieldText(el) {
-  return (el?.textContent || '').trim();
+  if (!el) return '';
+  const raw = el.isContentEditable ? el.innerText : (el.value ?? el.textContent ?? '');
+  return raw.replace(/\r\n/g, '\n').trim();
+}
+
+function setFieldText(el, text) {
+  if (!el) return;
+  const normalized = (text ?? '').replace(/\r\n/g, '\n');
+  if (el.isContentEditable) {
+    el.textContent = normalized;
+  } else if ('value' in el) {
+    el.value = normalized;
+  } else {
+    el.textContent = normalized;
+  }
+  setEditorPlaceholder(el);
 }
 
 function setEditorPlaceholder(el) {
@@ -355,10 +370,8 @@ function enterPostEditMode(item = null, { returnToRead = false } = {}) {
   if (!dateEl || !titleEl || !bodyEl) return;
 
   dateEl.value = item?.post_date || todayISO();
-  titleEl.textContent = item?.title || '';
-  bodyEl.textContent = item?.body || '';
-  setEditorPlaceholder(titleEl);
-  setEditorPlaceholder(bodyEl);
+  setFieldText(titleEl, item?.title || '');
+  setFieldText(bodyEl, item?.body || '');
   updatePostThumbUI();
 
   document.getElementById('post-read').hidden = true;
@@ -420,8 +433,7 @@ function openJournalEditor(item = null, { returnToRead = false } = {}) {
   if (!dateEl || !bodyEl) return;
 
   dateEl.value = item?.post_date || todayISO();
-  bodyEl.textContent = item?.body || '';
-  setEditorPlaceholder(bodyEl);
+  setFieldText(bodyEl, item?.body || '');
   if (saveBtn) saveBtn.textContent = journalEditId ? 'Save' : 'Save';
   if (cancelBtn) cancelBtn.textContent = returnToRead ? '← Cancel' : '← Cancel';
 
@@ -607,7 +619,7 @@ function openJournalView(id, { pushHash = true } = {}) {
 
   dateEl.dateTime = item.post_date;
   dateEl.textContent = formatDate(item.post_date);
-  bodyEl.textContent = item.body;
+  setFieldText(bodyEl, item.body);
 
   if (actionsEl) {
     actionsEl.innerHTML = `

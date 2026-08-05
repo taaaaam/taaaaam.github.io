@@ -2052,6 +2052,11 @@ body.banana-site.post-open {
   caret-color: var(--black);
 }
 
+.editor-field[contenteditable="true"] {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .editor-field.is-empty:empty::before {
   content: attr(data-placeholder);
   color: var(--faint);
