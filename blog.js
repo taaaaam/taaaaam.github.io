@@ -64,6 +64,16 @@ async function requireSupabaseAuth() {
   }
 }
 
+async function refreshSupabaseSession() {
+  const sb = initSupabase();
+  if (!sb) return;
+  const { error } = await sb.auth.refreshSession();
+  if (error) {
+    setAdmin(false);
+    throw new Error('Your session expired. Log in again to save changes.');
+  }
+}
+
 function setAdmin(on) {
   if (on) sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
   else sessionStorage.removeItem(ADMIN_SESSION_KEY);
@@ -129,12 +139,13 @@ function writeLocalPosts(posts) {
 
 async function fetchPosts() {
   const sb = initSupabase();
-  if (sb) {
+  if (hasSupabase()) {
     const { data, error } = await sb
       .from('blog_posts')
       .select('id, entry_type, title, body, thumbnail_url, post_date, created_at')
       .order('post_date', { ascending: false });
-    if (!error && data) return data;
+    if (error) throw error;
+    return data ?? [];
   }
   if (isAdmin()) {
     return readLocalPosts().sort((a, b) => b.post_date.localeCompare(a.post_date));
@@ -170,17 +181,21 @@ async function uploadThumbnail(file) {
 }
 
 async function savePost(payload) {
-  const sb = initSupabase();
-  if (sb && isAdmin()) {
+  if (hasSupabase()) {
+    const sb = initSupabase();
     await requireSupabaseAuth();
+    await refreshSupabaseSession();
     const { data, error } = await sb.from('blog_posts').insert(payload).select().maybeSingle();
     if (error) throw error;
     if (!data) {
-      throw new Error('Could not publish — check that you are logged in.');
+      throw new Error(
+        'Could not publish — database permissions may be missing. Run supabase-fix-write-policies.sql in Supabase.'
+      );
     }
     return data;
   }
 
+  if (!isAdmin()) throw new Error('Not authorized.');
   const posts = readLocalPosts();
   const post = {
     id: crypto.randomUUID(),
@@ -193,9 +208,23 @@ async function savePost(payload) {
 }
 
 async function updatePost(id, payload) {
-  const sb = initSupabase();
-  if (sb && isAdmin()) {
+  if (hasSupabase()) {
+    const sb = initSupabase();
     await requireSupabaseAuth();
+    await refreshSupabaseSession();
+
+    const { data: existing, error: fetchError } = await sb
+      .from('blog_posts')
+      .select('id')
+      .eq('id', id)
+      .maybeSingle();
+    if (fetchError) throw fetchError;
+    if (!existing) {
+      throw new Error(
+        'This post is not in Supabase (it may have been created locally). Delete it and create a new post, or run supabase-fix-write-policies.sql if saves are blocked.'
+      );
+    }
+
     const { data, error } = await sb
       .from('blog_posts')
       .update(payload)
@@ -204,24 +233,30 @@ async function updatePost(id, payload) {
       .maybeSingle();
     if (error) throw error;
     if (!data) {
-      throw new Error('Could not save — your session may have expired, or this post no longer exists.');
+      throw new Error(
+        'Save was blocked by database permissions. Open Supabase → SQL Editor and run supabase-fix-write-policies.sql from your project.'
+      );
     }
     return data;
   }
 
+  if (!isAdmin()) throw new Error('Not authorized.');
   const posts = readLocalPosts().map(p => (p.id === id ? { ...p, ...payload } : p));
   writeLocalPosts(posts);
   return posts.find(p => p.id === id);
 }
 
 async function removePost(id) {
-  const sb = initSupabase();
-  if (sb && isAdmin()) {
+  if (hasSupabase()) {
+    const sb = initSupabase();
     await requireSupabaseAuth();
+    await refreshSupabaseSession();
     const { error } = await sb.from('blog_posts').delete().eq('id', id);
     if (error) throw error;
     return;
   }
+
+  if (!isAdmin()) throw new Error('Not authorized.');
   writeLocalPosts(readLocalPosts().filter(p => p.id !== id));
 }
 
