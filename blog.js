@@ -44,8 +44,24 @@ function initSupabase() {
   return supabaseClient;
 }
 
+async function getSupabaseSession() {
+  const sb = initSupabase();
+  if (!sb) return null;
+  const { data: { session } } = await sb.auth.getSession();
+  return session;
+}
+
 function isAdmin() {
   return sessionStorage.getItem(ADMIN_SESSION_KEY) === '1';
+}
+
+async function requireSupabaseAuth() {
+  if (!hasSupabase()) return;
+  const session = await getSupabaseSession();
+  if (!session) {
+    setAdmin(false);
+    throw new Error('Your session expired. Log in again to save changes.');
+  }
 }
 
 function setAdmin(on) {
@@ -139,6 +155,8 @@ async function uploadThumbnail(file) {
   const sb = initSupabase();
   if (!sb) return fileToDataUrl(file);
 
+  await requireSupabaseAuth();
+
   const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
   const path = `${crypto.randomUUID()}.${ext}`;
   const { error } = await sb.storage.from(THUMBNAIL_BUCKET).upload(path, file, {
@@ -154,8 +172,12 @@ async function uploadThumbnail(file) {
 async function savePost(payload) {
   const sb = initSupabase();
   if (sb && isAdmin()) {
-    const { data, error } = await sb.from('blog_posts').insert(payload).select().single();
+    await requireSupabaseAuth();
+    const { data, error } = await sb.from('blog_posts').insert(payload).select().maybeSingle();
     if (error) throw error;
+    if (!data) {
+      throw new Error('Could not publish — check that you are logged in.');
+    }
     return data;
   }
 
@@ -173,13 +195,17 @@ async function savePost(payload) {
 async function updatePost(id, payload) {
   const sb = initSupabase();
   if (sb && isAdmin()) {
+    await requireSupabaseAuth();
     const { data, error } = await sb
       .from('blog_posts')
       .update(payload)
       .eq('id', id)
       .select()
-      .single();
+      .maybeSingle();
     if (error) throw error;
+    if (!data) {
+      throw new Error('Could not save — your session may have expired, or this post no longer exists.');
+    }
     return data;
   }
 
@@ -191,6 +217,7 @@ async function updatePost(id, payload) {
 async function removePost(id) {
   const sb = initSupabase();
   if (sb && isAdmin()) {
+    await requireSupabaseAuth();
     const { error } = await sb.from('blog_posts').delete().eq('id', id);
     if (error) throw error;
     return;
@@ -431,7 +458,7 @@ async function savePostEditor() {
       exitPostEditMode({ toFeed: true });
     }
   } catch (err) {
-    alert(postEditId ? 'Could not save.' : 'Could not publish.');
+    alert(err.message || (postEditId ? 'Could not save.' : 'Could not publish.'));
     console.error(err);
   } finally {
     if (saveBtn) saveBtn.disabled = false;
@@ -815,11 +842,19 @@ function initBlogPage() {
   });
 }
 
+let authListenerRegistered = false;
+
 async function restoreSession() {
   const sb = initSupabase();
   if (sb) {
     const { data: { session } } = await sb.auth.getSession();
-    if (session) setAdmin(true);
+    setAdmin(Boolean(session));
+    if (!authListenerRegistered) {
+      authListenerRegistered = true;
+      sb.auth.onAuthStateChange((_event, session) => {
+        setAdmin(Boolean(session));
+      });
+    }
   }
 }
 
